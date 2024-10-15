@@ -12,13 +12,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // טען את תבנית החוזה
     fetch('agreement_template.txt')
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
         .then(text => {
             agreementTemplate = text;
+            console.log("תבנית החוזה נטענה בהצלחה");
         })
         .catch(error => {
             console.error("שגיאה בטעינת תבנית החוזה:", error);
-            alert("אירעה שגיאה בטעינת החוזה. אנא נסה שוב מאוחר יותר.");
+            alert("אירעה שגיאה בטעינת החוזה. אנא ודא שהקובץ agreement_template.txt קיים בשורש הפרויקט.");
         });
 });
 
