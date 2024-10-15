@@ -1,9 +1,6 @@
 let signaturePad;
 let agreementTemplate = '';
 
-// גופן בעברית שהומר ל-Base64
-const hebrewFont = 'AAEAAAAPAIAAAw...'; // כאן יש להכניס את קוד הגופן
-
 document.addEventListener('DOMContentLoaded', function () {
     const canvas = document.getElementById('signatureCanvas');
     signaturePad = new SignaturePad(canvas);
@@ -25,6 +22,13 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function showPreview() {
+    // בדוק אם האלמנט שבו מוצגים פרטי הלקוח קיים
+    const clientDetailsElement = document.getElementById('clientDetails');
+    if (!clientDetailsElement) {
+        alert('שגיאה: האלמנט להצגת פרטי הלקוח לא נמצא!');
+        return;
+    }
+
     // אסוף את הנתונים מהטופס
     const formData = {
         date: document.getElementById('date').value,
@@ -54,6 +58,20 @@ function showPreview() {
     // הצגת התוכן המעודכן בתצוגה מקדימה
     document.getElementById('previewContent').textContent = filledAgreement;
 
+    // הצגת פרטי הלקוח בתצוגה בשלב השני
+    clientDetailsElement.innerHTML = `
+        <h3>פרטי הלקוח</h3>
+        <p>תאריך: ${formData.date}</p>
+        <p>שם: ${formData.name}</p>
+        <p>ת.ז: ${formData.id}</p>
+        <p>כתובת: ${formData.address}</p>
+        <p>טלפון: ${formData.phone}</p>
+        <p>סוג רכב: ${formData.carType}</p>
+        <p>קילומטרים בתחילת הנסיעה: ${formData.startKm}</p>
+        <p>שעת התחלה: ${formData.startTime}</p>
+        <p>כמות דלק: ${formData.fuelAmount}</p>
+    `;
+
     // הצגת תמונת רישיון נהיגה
     const licenseImage = document.getElementById('licenseImage').files[0];
     if (licenseImage) {
@@ -82,20 +100,6 @@ function showPreview() {
     // הצגת התצוגה המקדימה והסתרת הטופס
     document.getElementById('preview').style.display = 'block';
     document.getElementById('rentalForm').style.display = 'none';
-
-    // הצגת פרטי הלקוח בתצוגה בשלב השני
-    document.getElementById('clientDetails').innerHTML = `
-        <h3>פרטי הלקוח</h3>
-        <p>תאריך: ${formData.date}</p>
-        <p>שם: ${formData.name}</p>
-        <p>ת.ז: ${formData.id}</p>
-        <p>כתובת: ${formData.address}</p>
-        <p>טלפון: ${formData.phone}</p>
-        <p>סוג רכב: ${formData.carType}</p>
-        <p>קילומטרים בתחילת הנסיעה: ${formData.startKm}</p>
-        <p>שעת התחלה: ${formData.startTime}</p>
-        <p>כמות דלק: ${formData.fuelAmount}</p>
-    `;
 }
 
 function clearSignature() {
