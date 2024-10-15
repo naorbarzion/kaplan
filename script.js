@@ -1,6 +1,9 @@
 let signaturePad;
 let agreementTemplate = '';
 
+// גופן בעברית שהומר ל-Base64
+const hebrewFont = 'AAEAAAAPAIAAAw...'; // כאן יש להכניס את קוד הגופן
+
 document.addEventListener('DOMContentLoaded', function () {
     const canvas = document.getElementById('signatureCanvas');
     signaturePad = new SignaturePad(canvas);
@@ -151,16 +154,32 @@ ${content}
     txtLink.click();
     document.body.removeChild(txtLink);
 
-    // אפשרות 3: שמירת המסמך בפורמט PDF
+    // אפשרות 3: שמירת המסמך בפורמט PDF עם גופן עברי
     const { jsPDF } = window.jspdf;
-    const pdfDoc = new jsPDF();
+    const pdfDoc = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+        putOnlyUsedFonts: true,
+        compress: true
+    });
 
-    pdfDoc.text(10, 10, content, { align: 'right' });
+    // הוספת הגופן העברי למסמך
+    pdfDoc.addFileToVFS('David-normal.ttf', hebrewFont);
+    pdfDoc.addFont('David-normal.ttf', 'David', 'normal');
+    pdfDoc.setFont('David', 'normal');
+
+    // הגדרת כיווניות הטקסט לימין לשמאל
+    pdfDoc.setR2L(true);
+
+    // הוספת התוכן עם יישור לימין
+    pdfDoc.text(content, 180, 10, { align: 'right' });
 
     // הוספת חתימה ל-PDF
     if (signatureImage) {
         pdfDoc.addImage(signatureImage, 'PNG', 10, 50, 50, 20);
     }
 
-    pdfDoc.save('Rental_Agreement.pdf');
+    // שמירת ה-PDF
+    pdfDoc.save('Rental_Agreement_Hebrew.pdf');
 }
