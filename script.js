@@ -3,23 +3,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearSignatureButton = document.getElementById('clearSignatureButton');
     const generatePDFButton = document.getElementById('generatePDFButton');
     const editFormButton = document.getElementById('editFormButton');
+    const signatureCanvas = document.getElementById('signatureCanvas');
 
-    // בדוק שכל האלמנטים קיימים לפני ההפעלה
-    if (!previewButton || !generatePDFButton || !editFormButton) {
-        console.error("Element(s) not found in the document.");
+    if (!previewButton || !clearSignatureButton || !generatePDFButton || !editFormButton || !signatureCanvas) {
+        console.error("One or more required elements not found in the document.");
         return;
     }
 
-    const signaturePad = new SignaturePad(document.getElementById('signatureCanvas'));
+    const signaturePad = new SignaturePad(signatureCanvas);
     let agreementTemplate = '';
 
-    // טעינת תבנית ההסכם
+    // Load the agreement template
     fetch('agreement_template.txt')
         .then(response => response.text())
-        .then(text => agreementTemplate = text)
-        .catch(() => alert("Error loading agreement template."));
+        .then(text => {
+            agreementTemplate = text;
+        })
+        .catch(() => {
+            console.error("Error loading agreement template.");
+            agreementTemplate = "תנאי החוזה לא נטענו בהצלחה. אנא צור קשר עם מנהל המערכת.";
+        });
 
-    // פונקציה להצגת תצוגה מקדימה
     previewButton.addEventListener('click', () => {
         const formData = getFormData();
         if (!isFormValid(formData)) {
@@ -31,23 +35,26 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleDisplay('preview', 'rentalForm');
     });
 
-    // פונקציה ליצירת PDF
     generatePDFButton.addEventListener('click', () => {
         if (signaturePad.isEmpty()) {
             alert("אנא חתום על ההסכם לפני יצירת המסמך.");
             return;
         }
         const element = document.getElementById('preview');
-        html2pdf().from(element).save('Rental_Agreement.pdf');
+        const opt = {
+            margin: 10,
+            filename: 'הסכם_השכרת_רכב.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
     });
 
-    // פונקציה לניקוי חתימה
-    clearSignatureButton?.addEventListener('click', () => signaturePad.clear());
+    clearSignatureButton.addEventListener('click', () => signaturePad.clear());
 
-    // עריכת הטופס מחדש
     editFormButton.addEventListener('click', () => toggleDisplay('rentalForm', 'preview'));
 
-    // פונקציות עזר
     function getFormData() {
         return {
             date: document.getElementById('date').value,
@@ -66,27 +73,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return Object.values(formData).every(value => value);
     }
 
-    // ממלא את פרטי הלקוח בתצוגה מקדימה
     function fillPreview(formData, template) {
-        let filledAgreement = template;
-        Object.entries(formData).forEach(([key, value]) => {
-            filledAgreement = filledAgreement.replace(new RegExp(`{${key}}`, 'g'), value);
-        });
-
         document.getElementById('clientDetails').innerHTML = `
-            <p>תאריך: ${formData.date}</p>
-            <p>שם מלא: ${formData.name}</p>
-            <p>ת.ז: ${formData.id}</p>
-            <p>כתובת: ${formData.address}</p>
-            <p>טלפון: ${formData.phone}</p>
-            <p>סוג רכב: ${formData.carType}</p>
-            <p>קילומטרים בתחילת הנסיעה: ${formData.startKm}</p>
-            <p>שעת יציאה: ${formData.startTime}</p>
-            <p>כמות דלק: ${formData.fuelAmount}</p>
+            <div class="grid grid-cols-2 gap-4">
+                <p><strong>תאריך:</strong> ${formData.date}</p>
+                <p><strong>שם מלא:</strong> ${formData.name}</p>
+                <p><strong>ת.ז:</strong> ${formData.id}</p>
+                <p><strong>כתובת:</strong> ${formData.address}</p>
+                <p><strong>טלפון:</strong> ${formData.phone}</p>
+                <p><strong>סוג רכב:</strong> ${formData.carType}</p>
+                <p><strong>קילומטרים בתחילת הנסיעה:</strong> ${formData.startKm}</p>
+                <p><strong>שעת יציאה:</strong> ${formData.startTime}</p>
+                <p><strong>כמות דלק:</strong> ${formData.fuelAmount}</p>
+            </div>
         `;
+
+        // Display the full agreement template
+        document.getElementById('agreementText').innerHTML = `<pre class="whitespace-pre-wrap">${template}</pre>`;
     }
 
-    // הצגת תמונות רישיון נהיגה ותמונות הרכב בתצוגה מקדימה
     function handleImagesPreview() {
         const licenseImage = document.getElementById('licenseImage').files[0];
         const licensePreview = document.getElementById('licensePreview');
@@ -101,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         carImagesPreview.innerHTML = '';
         Array.from(carImages).forEach((file) => {
             const img = document.createElement('img');
-            img.classList.add('image-preview');
+            img.classList.add('max-w-xs', 'h-auto', 'mb-2', 'rounded', 'shadow');
             const reader = new FileReader();
             reader.onload = (e) => img.src = e.target.result;
             reader.readAsDataURL(file);
@@ -109,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // פונקציה להחלפת התצוגה בין הטופס לתצוגה מקדימה
     function toggleDisplay(showId, hideId) {
         document.getElementById(showId).style.display = 'block';
         document.getElementById(hideId).style.display = 'none';
