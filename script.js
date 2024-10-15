@@ -1,4 +1,5 @@
 let signaturePad;
+let agreementTemplate;
 
 document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('signatureCanvas');
@@ -8,6 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('clearSignatureButton').addEventListener('click', clearSignature);
     document.getElementById('generateContractButton').addEventListener('click', generateContract);
     document.getElementById('editFormButton').addEventListener('click', editForm);
+
+    // טען את תבנית החוזה
+    loadFile('agreement_template.docx', function(error, content) {
+        if (error) {
+            console.error("שגיאה בטעינת תבנית החוזה:", error);
+            alert("אירעה שגיאה בטעינת החוזה. אנא נסה שוב מאוחר יותר.");
+        } else {
+            agreementTemplate = content;
+        }
+    });
 });
 
 function showPreview() {
@@ -28,33 +39,39 @@ function showPreview() {
         return;
     }
 
-    // טען את תבנית החוזה
-    loadFile('agreement_template.docx', function(error, content) {
-        if (error) {
-            console.error("שגיאה בטעינת תבנית החוזה:", error);
-            alert("אירעה שגיאה בטעינת החוזה. אנא נסה שוב מאוחר יותר.");
-            return;
+    // מלא את פרטי החוזה
+    const filledAgreement = fillAgreementTemplate(agreementTemplate, formData);
+    
+    // הצג את החוזה המלא
+    document.getElementById('previewContent').textContent = filledAgreement;
+    
+    // הצג את תמונת הרישיון
+    const licenseImage = document.getElementById('licenseImage').files[0];
+    if (licenseImage) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('licensePreview').src = e.target.result;
         }
+        reader.readAsDataURL(licenseImage);
+    }
 
-        // מלא את פרטי החוזה
-        const filledAgreement = fillAgreementTemplate(content, formData);
-        
-        // הצג את החוזה המלא
-        document.getElementById('previewContent').textContent = filledAgreement;
-        
-        // הצג את תמונת הרישיון
-        const licenseImage = document.getElementById('licenseImage').files[0];
-        if (licenseImage) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('licensePreview').src = e.target.result;
-            }
-            reader.readAsDataURL(licenseImage);
+    // הצג את תמונות הרכב
+    const carImages = document.getElementById('carImages').files;
+    const carImagesPreview = document.getElementById('carImagesPreview');
+    carImagesPreview.innerHTML = '';
+    for (let i = 0; i < carImages.length; i++) {
+        const img = document.createElement('img');
+        img.classList.add('image-preview');
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            img.src = e.target.result;
         }
+        reader.readAsDataURL(carImages[i]);
+        carImagesPreview.appendChild(img);
+    }
 
-        document.getElementById('preview').style.display = 'block';
-        document.getElementById('rentalForm').style.display = 'none';
-    });
+    document.getElementById('preview').style.display = 'block';
+    document.getElementById('rentalForm').style.display = 'none';
 }
 
 function fillAgreementTemplate(template, data) {
@@ -92,17 +109,31 @@ function generateContract() {
         return;
     }
 
-    // כאן תהיה הלוגיקה ליצירת קובץ DOCX סופי עם החתימה
-    // לצורך הדוגמה, נשמור רק את החתימה כתמונה
-    const signatureImage = signaturePad.toDataURL();
-    
-    // שמירת החתימה כתמונה (לדוגמה בלבד)
-    const link = document.createElement('a');
-    link.href = signatureImage;
-    link.download = 'signature.png';
-    link.click();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
 
-    alert("החוזה נוצר בהצלחה!");
+    // הוסף את תוכן החוזה
+    const content = document.getElementById('previewContent').textContent;
+    doc.text(content, 10, 10);
+
+    // הוסף את תמונת רישיון הנהיגה
+    const licenseImage = document.getElementById('licensePreview');
+    doc.addImage(licenseImage, 'JPEG', 10, 100, 50, 30);
+
+    // הוסף את תמונות הרכב
+    const carImages = document.querySelectorAll('#carImagesPreview img');
+    let yPosition = 140;
+    carImages.forEach((img, index) => {
+        doc.addImage(img, 'JPEG', 10, yPosition, 30, 20);
+        yPosition += 30;
+    });
+
+    // הוסף את החתימה
+    const signatureImage = signaturePad.toDataURL();
+    doc.addImage(signatureImage, 'PNG', 10, yPosition, 50, 20);
+
+    // שמור את הקובץ
+    doc.save('חוזה_השכרת_רכב.pdf');
 }
 
 function loadFile(url, callback) {
