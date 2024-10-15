@@ -1,5 +1,5 @@
-let signaturePad;
-let agreementTemplate = '';
+// ראשית, יש להוסיף גופן עברי תקין שהומר ל-Base64
+const hebrewFont = 'AAEAAAAQAIAAAw...'; // כאן יש להכניס את קוד ה-Base64 הנכון לאחר המרה
 
 document.addEventListener('DOMContentLoaded', function () {
     const canvas = document.getElementById('signatureCanvas');
@@ -22,14 +22,12 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function showPreview() {
-    // בדוק אם האלמנט שבו מוצגים פרטי הלקוח קיים
     const clientDetailsElement = document.getElementById('clientDetails');
     if (!clientDetailsElement) {
         alert('שגיאה: האלמנט להצגת פרטי הלקוח לא נמצא!');
         return;
     }
 
-    // אסוף את הנתונים מהטופס
     const formData = {
         date: document.getElementById('date').value,
         name: document.getElementById('name').value,
@@ -42,23 +40,19 @@ function showPreview() {
         fuelAmount: document.getElementById('fuelAmount').value
     };
 
-    // Validate that all fields are filled
     if (Object.values(formData).some(value => !value)) {
         alert("Please fill out all the required fields.");
         return;
     }
 
-    // מלא את תבנית החוזה בנתונים מהטופס
     let filledAgreement = agreementTemplate;
     for (const [key, value] of Object.entries(formData)) {
         const regex = new RegExp(`{${key}}`, 'g');
         filledAgreement = filledAgreement.replace(regex, value);
     }
 
-    // הצגת התוכן המעודכן בתצוגה מקדימה
     document.getElementById('previewContent').textContent = filledAgreement;
 
-    // הצגת פרטי הלקוח בתצוגה בשלב השני
     clientDetailsElement.innerHTML = `
         <h3>פרטי הלקוח</h3>
         <p>תאריך: ${formData.date}</p>
@@ -72,7 +66,6 @@ function showPreview() {
         <p>כמות דלק: ${formData.fuelAmount}</p>
     `;
 
-    // הצגת תמונת רישיון נהיגה
     const licenseImage = document.getElementById('licenseImage').files[0];
     if (licenseImage) {
         const reader = new FileReader();
@@ -82,10 +75,9 @@ function showPreview() {
         reader.readAsDataURL(licenseImage);
     }
 
-    // הצגת תמונות הרכב
     const carImages = document.getElementById('carImages').files;
     const carImagesPreview = document.getElementById('carImagesPreview');
-    carImagesPreview.innerHTML = ''; // נקה תמונות קודמות
+    carImagesPreview.innerHTML = ''; 
     for (let i = 0; i < carImages.length; i++) {
         const img = document.createElement('img');
         img.classList.add('image-preview');
@@ -97,20 +89,8 @@ function showPreview() {
         carImagesPreview.appendChild(img);
     }
 
-    // הצגת התצוגה המקדימה והסתרת הטופס
     document.getElementById('preview').style.display = 'block';
     document.getElementById('rentalForm').style.display = 'none';
-}
-
-function clearSignature() {
-    if (signaturePad) {
-        signaturePad.clear();
-    }
-}
-
-function editForm() {
-    document.getElementById('preview').style.display = 'none';
-    document.getElementById('rentalForm').style.display = 'block';
 }
 
 function generateContract() {
@@ -119,46 +99,9 @@ function generateContract() {
         return;
     }
 
-    // איסוף פרטי החוזה והחתימה
     const content = document.getElementById('previewContent').textContent;
     const signatureImage = signaturePad.toDataURL();
 
-    // אפשרות 1: שמירת המסמך בפורמט Word
-    const docContent = `
-    <h2>הסכם השכרה</h2>
-    <p>${content}</p>
-    <h3>חתימת הלקוח:</h3>
-    <img src="${signatureImage}" width="200" height="50" />
-    `;
-
-    const wordBlob = new Blob(['\ufeff', docContent], { type: 'application/msword' });
-    const wordUrl = URL.createObjectURL(wordBlob);
-    const wordLink = document.createElement('a');
-    wordLink.href = wordUrl;
-    wordLink.download = 'Rental_Agreement.docx';
-    document.body.appendChild(wordLink);
-    wordLink.click();
-    document.body.removeChild(wordLink);
-
-    // אפשרות 2: שמירת המסמך בפורמט TXT
-    const txtContent = `
-הסכם השכרה:
-${content}
-
-חתימת הלקוח:
-[חתימה מצורפת בקובץ נפרד]
-    `;
-
-    const txtBlob = new Blob([txtContent], { type: 'text/plain' });
-    const txtUrl = URL.createObjectURL(txtBlob);
-    const txtLink = document.createElement('a');
-    txtLink.href = txtUrl;
-    txtLink.download = 'Rental_Agreement.txt';
-    document.body.appendChild(txtLink);
-    txtLink.click();
-    document.body.removeChild(txtLink);
-
-    // אפשרות 3: שמירת המסמך בפורמט PDF עם גופן עברי
     const { jsPDF } = window.jspdf;
     const pdfDoc = new jsPDF({
         orientation: "portrait",
@@ -179,11 +122,9 @@ ${content}
     // הוספת התוכן עם יישור לימין
     pdfDoc.text(content, 180, 10, { align: 'right' });
 
-    // הוספת חתימה ל-PDF
     if (signatureImage) {
         pdfDoc.addImage(signatureImage, 'PNG', 10, 50, 50, 20);
     }
 
-    // שמירת ה-PDF
     pdfDoc.save('Rental_Agreement_Hebrew.pdf');
 }
