@@ -9,85 +9,88 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-4">
+    <div class="container mx-auto p-4 max-w-3xl">
         <h1 class="text-3xl font-bold mb-6 text-center">הסכם השכרת רכב</h1>
         
-        <form id="rentalForm" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="date">תאריך:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="date" type="date" required>
+        <form id="rentalForm" class="bg-white shadow-md rounded px-6 py-4 mb-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="mb-2">
+                    <label class="block text-gray-700 text-sm font-bold mb-1" for="date">תאריך:</label>
+                    <input class="shadow border rounded w-full py-1 px-2 text-gray-700" id="date" type="date" required>
+                </div>
+                <div class="mb-2">
+                    <label class="block text-gray-700 text-sm font-bold mb-1" for="name">שם מלא:</label>
+                    <input class="shadow border rounded w-full py-1 px-2 text-gray-700" id="name" type="text" required>
+                </div>
+                <div class="mb-2">
+                    <label class="block text-gray-700 text-sm font-bold mb-1" for="id">ת.ז:</label>
+                    <input class="shadow border rounded w-full py-1 px-2 text-gray-700" id="id" type="text" required>
+                </div>
+                <div class="mb-2">
+                    <label class="block text-gray-700 text-sm font-bold mb-1" for="phone">טלפון:</label>
+                    <input class="shadow border rounded w-full py-1 px-2 text-gray-700" id="phone" type="tel" required>
+                </div>
+                <div class="mb-2">
+                    <label class="block text-gray-700 text-sm font-bold mb-1" for="carType">סוג הרכב:</label>
+                    <input class="shadow border rounded w-full py-1 px-2 text-gray-700" id="carType" type="text" required>
+                </div>
+                <div class="mb-2">
+                    <label class="block text-gray-700 text-sm font-bold mb-1" for="startKm">ק"מ התחלתי:</label>
+                    <input class="shadow border rounded w-full py-1 px-2 text-gray-700" id="startKm" type="number" required>
+                </div>
+                <div class="mb-2">
+                    <label class="block text-gray-700 text-sm font-bold mb-1" for="startTime">שעת יציאה:</label>
+                    <input class="shadow border rounded w-full py-1 px-2 text-gray-700" id="startTime" type="time" required>
+                </div>
+                <div class="mb-2">
+                    <label class="block text-gray-700 text-sm font-bold mb-1" for="fuelAmount">כמות דלק:</label>
+                    <input class="shadow border rounded w-full py-1 px-2 text-gray-700" id="fuelAmount" type="text" required>
+                </div>
+            </div>
+            <div class="mb-2">
+                <label class="block text-gray-700 text-sm font-bold mb-1" for="licenseImage">תמונת רישיון נהיגה:</label>
+                <input class="shadow border rounded w-full py-1 px-2 text-gray-700" id="licenseImage" type="file" accept="image/*" required>
             </div>
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="name">שם מלא:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" required>
+                <label class="block text-gray-700 text-sm font-bold mb-1" for="carImages">תמונות הרכב:</label>
+                <input class="shadow border rounded w-full py-1 px-2 text-gray-700" id="carImages" type="file" accept="image/*" multiple required>
             </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="id">מספר תעודת זהות:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="id" type="text" required>
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="address">כתובת:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="address" type="text" required>
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">טלפון:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="phone" type="tel" required>
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="carType">סוג הרכב:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="carType" type="text" required>
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="startKm">קילומטראז' התחלתי:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="startKm" type="number" required>
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="startTime">שעת יציאה:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="startTime" type="time" required>
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="fuelAmount">כמות דלק:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="fuelAmount" type="text" required>
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="licenseImage">תמונת רישיון נהיגה:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="licenseImage" type="file" accept="image/*" required>
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="carImages">תמונות של הרכב ביציאה:</label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="carImages" type="file" accept="image/*" multiple required>
-            </div>
-            <div class="flex items-center justify-between">
+            <div class="flex justify-center">
                 <button id="previewButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
-                    הצג תצוגה מקדימה של החוזה
+                    הצג תצוגה מקדימה
                 </button>
             </div>
         </form>
 
-        <div id="preview" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" style="display: none;">
-            <h2 class="text-2xl font-bold mb-4">הסכם השכרת רכב</h2>
-            <div id="clientDetails" class="mb-6"></div>
-            <div id="agreementText" class="mb-6 text-sm"></div>
-            <div class="mb-6">
-                <h3 class="text-xl font-bold mb-2">תמונת רישיון נהיגה</h3>
-                <img id="licensePreview" class="max-w-full h-auto mb-4" alt="תמונת רישיון נהיגה">
+        <div id="preview" class="bg-white shadow-md rounded px-6 py-4 mb-4" style="display: none;">
+            <h2 class="text-2xl font-bold mb-4 text-center">הסכם השכרת רכב</h2>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <h3 class="text-lg font-bold mb-2">פרטי הלקוח</h3>
+                    <div id="clientDetails" class="text-sm"></div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-2">רישיון נהיגה</h3>
+                    <img id="licensePreview" class="max-w-full h-auto rounded shadow" alt="תמונת רישיון נהיגה">
+                </div>
             </div>
-            <div class="mb-6">
-                <h3 class="text-xl font-bold mb-2">תמונות הרכב</h3>
+            <div id="agreementText" class="mb-4 text-sm border p-3 rounded max-h-60 overflow-y-auto"></div>
+            <div class="mb-4">
+                <h3 class="text-lg font-bold mb-2">תמונות הרכב</h3>
                 <div id="carImagesPreview" class="flex flex-wrap gap-2"></div>
             </div>
-            <div class="mb-6">
-                <h3 class="text-xl font-bold mb-2">חתימת הלקוח</h3>
-                <canvas id="signatureCanvas" class="border border-gray-300" width="400" height="200"></canvas>
-                <button id="clearSignatureButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2" type="button">
+            <div class="mb-4">
+                <h3 class="text-lg font-bold mb-2">חתימת הלקוח</h3>
+                <canvas id="signatureCanvas" class="border border-gray-300 w-full" height="150"></canvas>
+                <button id="clearSignatureButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm mt-2">
                     נקה חתימה
                 </button>
             </div>
-            <div class="flex items-center justify-between">
-                <button id="generatePDFButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+            <div class="flex justify-between">
+                <button id="generatePDFButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     שמור כ-PDF
                 </button>
-                <button id="editFormButton" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+                <button id="editFormButton" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     ערוך פרטים
                 </button>
             </div>
