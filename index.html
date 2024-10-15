@@ -45,7 +45,7 @@
         <input type="time" id="startTime" required>
 
         <label for="fuelAmount">כמות דלק:</label>
-        <input type="text" id="fuelAmount" required>
+        <input type="number" id="fuelAmount" required> <!-- שינוי ל-input מספרי -->
 
         <label for="licenseImage">תמונת רישיון נהיגה:</label>
         <input type="file" id="licenseImage" accept="image/*" required>
@@ -59,6 +59,10 @@
     <div id="preview" style="display: none;">
         <h2>תצוגה מקדימה של החוזה</h2>
         <div id="previewContent"></div>
+
+        <h3>פרטי הלקוח:</h3>
+        <div id="clientDetails"></div> <!-- הוספת אלמנט להצגת פרטי הלקוח -->
+
         <h3>תמונת רישיון נהיגה:</h3>
         <img id="licensePreview" class="image-preview">
         <h3>תמונות הרכב:</h3>
