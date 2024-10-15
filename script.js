@@ -3,6 +3,11 @@ let signaturePad;
 document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('signatureCanvas');
     signaturePad = new SignaturePad(canvas);
+
+    document.getElementById('previewButton').addEventListener('click', showPreview);
+    document.getElementById('clearSignatureButton').addEventListener('click', clearSignature);
+    document.getElementById('generateContractButton').addEventListener('click', generateContract);
+    document.getElementById('editFormButton').addEventListener('click', editForm);
 });
 
 function showPreview() {
