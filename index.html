@@ -1,33 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car Rental Form</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.1/pizzip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.24.0/docxtemplater.js"></script>
+    <title>טופס השכרת רכב</title>
+    <link rel="shortcut icon" href="data:,">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.29.0/docxtemplater.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.1/dist/pizzip.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        label { display: block; margin-top: 10px; }
+        input { width: 100%; padding: 5px; margin-top: 5px; }
+        button { margin-top: 20px; padding: 10px; }
+    </style>
 </head>
 <body>
-    <h1>Car Rental Form</h1>
-    <form id="rentalForm" onsubmit="event.preventDefault(); generateContract();">
-        <label for="name">Full Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
+    <h1>טופס השכרת רכב</h1>
+    <form id="rentalForm">
+        <label for="name">שם מלא:</label>
+        <input type="text" id="name" required>
 
-        <label for="id">ID Number:</label>
-        <input type="text" id="id" name="id" required><br><br>
+        <label for="id">מספר תעודת זהות:</label>
+        <input type="text" id="id" required>
 
-        <label for="carType">Car Type:</label>
-        <input type="text" id="carType" name="carType" required><br><br>
+        <label for="carType">סוג הרכב:</label>
+        <input type="text" id="carType" required>
 
-        <label for="startKm">Starting Kilometer:</label>
-        <input type="text" id="startKm" name="startKm" required><br><br>
+        <label for="startKm">קילומטראז' התחלתי:</label>
+        <input type="number" id="startKm" required>
 
-        <button type="submit">Submit</button>
+        <button type="button" onclick="generateContract()">יצירת חוזה</button>
     </form>
-
-    <h2>Download Contract</h2>
-    <button onclick="downloadContract()">Download Filled Contract</button>
 
     <script src="script.js"></script>
 </body>
