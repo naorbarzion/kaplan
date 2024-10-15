@@ -1,58 +1,94 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById('signatureCanvas');
-    const signaturePad = new SignaturePad(canvas);
+    // תופס את האלמנטים השונים בדף
+    const previewButton = document.getElementById('previewButton');
+    const clearSignatureButton = document.getElementById('clearSignatureButton');
+    const generatePDFButton = document.getElementById('generatePDFButton');
+    const editFormButton = document.getElementById('editFormButton');
+
+    // בדיקה האם כל האלמנטים קיימים
+    if (!previewButton || !clearSignatureButton || !generatePDFButton || !editFormButton) {
+        console.error("Element(s) not found in the document.");
+        return;
+    }
+
+    const signaturePad = new SignaturePad(document.getElementById('signatureCanvas'));
     let agreementTemplate = '';
 
-    // טוען את תבנית ההסכם מהקובץ
+    // טעינת תבנית ההסכם
     fetch('agreement_template.txt')
         .then(response => response.text())
         .then(text => agreementTemplate = text)
         .catch(() => alert("Error loading agreement template."));
 
-    // אוספת נתוני טופס והצגת התצוגה המקדימה
-    const showPreview = () => {
+    // פונקציה להצגת התצוגה המקדימה
+    previewButton.addEventListener('click', () => {
         const formData = getFormData();
         if (!isFormValid(formData)) {
             alert("Please fill out all the required fields.");
             return;
         }
-
-        populateAgreement(formData);
+        fillPreview(formData, agreementTemplate);
         handleImagesPreview();
         toggleDisplay('preview', 'rentalForm');
-    };
-
-    // מחזירה את הנתונים מהטופס כ-object
-    const getFormData = () => ({
-        date: document.getElementById('date').value,
-        name: document.getElementById('name').value,
-        id: document.getElementById('id').value,
-        address: document.getElementById('address').value,
-        phone: document.getElementById('phone').value,
-        carType: document.getElementById('carType').value,
-        startKm: document.getElementById('startKm').value,
-        startTime: document.getElementById('startTime').value,
-        fuelAmount: document.getElementById('fuelAmount').value
     });
 
-    // מוודאת שכל השדות מלאים
-    const isFormValid = (formData) => Object.values(formData).every(value => value);
+    // פונקציה לניקוי החתימה
+    clearSignatureButton.addEventListener('click', () => signaturePad.clear());
 
-    // ממלאת את תבנית ההסכם עם הנתונים מהטופס
-    const populateAgreement = (formData) => {
-        let filledAgreement = agreementTemplate;
+    // פונקציה לעריכת הטופס מחדש
+    editFormButton.addEventListener('click', () => toggleDisplay('rentalForm', 'preview'));
+
+    // פונקציה ליצירת PDF מהתצוגה המקדימה
+    generatePDFButton.addEventListener('click', () => {
+        if (signaturePad.isEmpty()) {
+            alert("Please sign the contract before generating the document.");
+            return;
+        }
+        const element = document.getElementById('preview');
+        html2pdf().from(element).save('Rental_Agreement.pdf');
+    });
+
+    // פונקציות עזר
+    function getFormData() {
+        return {
+            date: document.getElementById('date').value,
+            name: document.getElementById('name').value,
+            id: document.getElementById('id').value,
+            address: document.getElementById('address').value,
+            phone: document.getElementById('phone').value,
+            carType: document.getElementById('carType').value,
+            startKm: document.getElementById('startKm').value,
+            startTime: document.getElementById('startTime').value,
+            fuelAmount: document.getElementById('fuelAmount').value
+        };
+    }
+
+    function isFormValid(formData) {
+        return Object.values(formData).every(value => value);
+    }
+
+    // ממלאת את פרטי הלקוח בתצוגה מקדימה
+    function fillPreview(formData, template) {
+        let filledAgreement = template;
         Object.entries(formData).forEach(([key, value]) => {
             filledAgreement = filledAgreement.replace(new RegExp(`{${key}}`, 'g'), value);
         });
 
         document.getElementById('clientDetails').innerHTML = `
-            <h3>פרטי הלקוח</h3>
-            ${Object.entries(formData).map(([key, value]) => `<p>${key}: ${value}</p>`).join('')}
+            <p>תאריך: ${formData.date}</p>
+            <p>שם מלא: ${formData.name}</p>
+            <p>ת.ז: ${formData.id}</p>
+            <p>כתובת: ${formData.address}</p>
+            <p>טלפון: ${formData.phone}</p>
+            <p>סוג רכב: ${formData.carType}</p>
+            <p>קילומטרים בתחילת הנסיעה: ${formData.startKm}</p>
+            <p>שעת יציאה: ${formData.startTime}</p>
+            <p>כמות דלק: ${formData.fuelAmount}</p>
         `;
-    };
+    }
 
-    // מטפלת בהצגת תמונות רישיון ותמונות הרכב
-    const handleImagesPreview = () => {
+    // הצגת תמונות רישיון נהיגה ותמונות הרכב בתצוגה המקדימה
+    function handleImagesPreview() {
         const licenseImage = document.getElementById('licenseImage').files[0];
         const licensePreview = document.getElementById('licensePreview');
         if (licenseImage) {
@@ -72,33 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsDataURL(file);
             carImagesPreview.appendChild(img);
         });
-    };
+    }
 
-    // מראה את התצוגה המקדימה ומסתירה את הטופס
-    const toggleDisplay = (showId, hideId) => {
+    // שינוי התצוגה בין הטופס לתצוגה מקדימה
+    function toggleDisplay(showId, hideId) {
         document.getElementById(showId).style.display = 'block';
         document.getElementById(hideId).style.display = 'none';
-    };
-
-    // פונקציה לניקוי החתימה
-    const clearSignature = () => signaturePad.clear();
-
-    // מחזירה את הטופס לעריכה
-    const editForm = () => toggleDisplay('rentalForm', 'preview');
-
-    // יצירת קובץ ה-PDF עם התצוגה המקדימה
-    const generateContract = () => {
-        if (signaturePad.isEmpty()) {
-            alert("Please sign the contract before generating the document.");
-            return;
-        }
-        const element = document.getElementById('preview');
-        html2pdf().from(element).save('Rental_Agreement.pdf');
-    };
-
-    // חיבור אירועים לכפתורים
-    document.getElementById('previewButton').addEventListener('click', showPreview);
-    document.getElementById('clearSignatureButton').addEventListener('click', clearSignature);
-    document.getElementById('generatePDFButton').addEventListener('click', generateContract);
-    document.getElementById('editFormButton').addEventListener('click', editForm);
+    }
 });
