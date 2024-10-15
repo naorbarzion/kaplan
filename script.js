@@ -10,21 +10,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('generateContractButton').addEventListener('click', generateContract);
     document.getElementById('editFormButton').addEventListener('click', editForm);
 
-    // טען את תבנית החוזה
+    // Load the agreement template
     fetch('agreement_template.txt')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text();
-        })
+        .then(response => response.text())
         .then(text => {
             agreementTemplate = text;
-            console.log("תבנית החוזה נטענה בהצלחה");
         })
         .catch(error => {
-            console.error("שגיאה בטעינת תבנית החוזה:", error);
-            alert("אירעה שגיאה בטעינת החוזה. אנא ודא שהקובץ agreement_template.txt קיים בשורש הפרויקט.");
+            alert("Error loading agreement template.");
         });
 });
 
@@ -41,21 +34,22 @@ function showPreview() {
         fuelAmount: document.getElementById('fuelAmount').value
     };
 
+    // Check if all required fields are filled
     if (Object.values(formData).some(value => !value)) {
-        alert("אנא מלא את כל השדות הנדרשים");
+        alert("Please fill out all required fields.");
         return;
     }
 
-    // מלא את פרטי החוזה
+    // Fill the agreement with the data from the form
     let filledAgreement = agreementTemplate;
     for (const [key, value] of Object.entries(formData)) {
         filledAgreement = filledAgreement.replace(`{${key}}`, value);
     }
 
-    // הצג את החוזה המלא
+    // Show the filled agreement in preview
     document.getElementById('previewContent').textContent = filledAgreement;
-    
-    // הצג את תמונת הרישיון
+
+    // Show the driver's license image preview
     const licenseImage = document.getElementById('licenseImage').files[0];
     if (licenseImage) {
         const reader = new FileReader();
@@ -65,10 +59,10 @@ function showPreview() {
         reader.readAsDataURL(licenseImage);
     }
 
-    // הצג את תמונות הרכב
+    // Show car images in preview
     const carImages = document.getElementById('carImages').files;
     const carImagesPreview = document.getElementById('carImagesPreview');
-    carImagesPreview.innerHTML = '';
+    carImagesPreview.innerHTML = ''; // Clear any previous images
     for (let i = 0; i < carImages.length; i++) {
         const img = document.createElement('img');
         img.classList.add('image-preview');
@@ -80,6 +74,7 @@ function showPreview() {
         carImagesPreview.appendChild(img);
     }
 
+    // Show the preview and hide the form
     document.getElementById('preview').style.display = 'block';
     document.getElementById('rentalForm').style.display = 'none';
 }
@@ -97,39 +92,37 @@ function editForm() {
 
 function generateContract() {
     if (!signaturePad || signaturePad.isEmpty()) {
-        alert("אנא חתום על החוזה לפני היצירה");
+        alert("Please sign the agreement before generating the contract.");
         return;
     }
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // הוסף את תוכן החוזה
+    // Add the agreement content to the PDF
     const content = document.getElementById('previewContent').textContent;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.text(content, 10, 10, { maxWidth: 190, align: "right" });
 
-    // הוסף את תמונת רישיון הנהיגה
+    // Add the driver's license image to the PDF
     const licenseImage = document.getElementById('licensePreview');
     if (licenseImage.src) {
         doc.addImage(licenseImage.src, 'JPEG', 10, doc.lastAutoTable.finalY + 10, 50, 30);
     }
 
-    // הוסף את תמונות הרכב
+    // Add the car images to the PDF
     const carImages = document.querySelectorAll('#carImagesPreview img');
     let yPosition = doc.lastAutoTable.finalY + 50;
-    carImages.forEach((img, index) => {
+    carImages.forEach((img) => {
         doc.addImage(img.src, 'JPEG', 10, yPosition, 30, 20);
         yPosition += 30;
     });
 
-    // הוסף את החתימה
+    // Add the signature to the PDF
     const signatureImage = signaturePad.toDataURL();
     doc.addImage(signatureImage, 'PNG', 10, yPosition, 50, 20);
 
-    // שמור את הקובץ
-    doc.save('חוזה_השכרת_רכב.pdf');
+    // Save the PDF
+    doc.save('Rental_Agreement.pdf');
 }
-
-console.log("script.js נטען בהצלחה");
