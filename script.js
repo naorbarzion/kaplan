@@ -112,7 +112,7 @@ function generateContract() {
         return;
     }
 
-    // Collect the agreement content and user details
+    // איסוף פרטי החוזה והחתימה
     const content = document.getElementById('previewContent').textContent;
     const signatureImage = signaturePad.toDataURL();
 
@@ -125,13 +125,13 @@ function generateContract() {
     `;
 
     const wordBlob = new Blob(['\ufeff', docContent], { type: 'application/msword' });
-    const url = URL.createObjectURL(wordBlob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'Rental_Agreement.docx';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const wordUrl = URL.createObjectURL(wordBlob);
+    const wordLink = document.createElement('a');
+    wordLink.href = wordUrl;
+    wordLink.download = 'Rental_Agreement.docx';
+    document.body.appendChild(wordLink);
+    wordLink.click();
+    document.body.removeChild(wordLink);
 
     // אפשרות 2: שמירת המסמך בפורמט TXT
     const txtContent = `
@@ -150,4 +150,17 @@ ${content}
     document.body.appendChild(txtLink);
     txtLink.click();
     document.body.removeChild(txtLink);
+
+    // אפשרות 3: שמירת המסמך בפורמט PDF
+    const { jsPDF } = window.jspdf;
+    const pdfDoc = new jsPDF();
+
+    pdfDoc.text(10, 10, content, { align: 'right' });
+
+    // הוספת חתימה ל-PDF
+    if (signatureImage) {
+        pdfDoc.addImage(signatureImage, 'PNG', 10, 50, 50, 20);
+    }
+
+    pdfDoc.save('Rental_Agreement.pdf');
 }
