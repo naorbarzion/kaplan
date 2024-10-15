@@ -4,6 +4,17 @@ window.onerror = function(message, source, lineno, colno, error) {
     alert("אירעה שגיאה. אנא בדוק את קונסול הדפדפן לפרטים נוספים.");
 };
 
+let signaturePad;
+
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.getElementById('signatureCanvas');
+    signaturePad = new SignaturePad(canvas);
+});
+
+function clearSignature() {
+    signaturePad.clear();
+}
+
 function loadDocxTemplate(url, callback) {
     console.log("מנסה לטעון קובץ מ:", url);
     var xhr = new XMLHttpRequest();
@@ -30,9 +41,16 @@ function generateContract() {
     const id = document.getElementById('id').value;
     const carType = document.getElementById('carType').value;
     const startKm = document.getElementById('startKm').value;
+    const date = new Date().toLocaleDateString('he-IL');
+    const signature = signaturePad.isEmpty() ? "לא נחתם" : signaturePad.toDataURL();
 
     if (!name || !id || !carType || !startKm) {
         alert("אנא מלא את כל השדות הנדרשים");
+        return;
+    }
+
+    if (signaturePad.isEmpty()) {
+        alert("אנא חתום על החוזה לפני היצירה");
         return;
     }
 
@@ -57,6 +75,8 @@ function generateContract() {
                 id: id,
                 carType: carType,
                 startKm: startKm,
+                date: date,
+                signature: signature
             });
 
             console.log("מרנדר את המסמך");
