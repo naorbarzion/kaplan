@@ -1,7 +1,7 @@
 let signaturePad;
 let agreementTemplate = '';
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('signatureCanvas');
     signaturePad = new SignaturePad(canvas);
 
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function showPreview() {
-    // אסוף את הנתונים מהטופס
+    // איסוף נתוני הטופס
     const formData = {
         date: document.getElementById('date').value,
         name: document.getElementById('name').value,
@@ -35,25 +35,26 @@ function showPreview() {
         fuelAmount: document.getElementById('fuelAmount').value
     };
 
+    // וידוא שכל השדות מלאים
     if (Object.values(formData).some(value => !value)) {
-        alert("Please fill out all the required fields.");
+        alert("אנא מלא את כל השדות הנדרשים.");
         return;
     }
 
-    // מלא את תבנית החוזה בנתונים מהטופס
+    // מילוי תבנית ההסכם עם נתוני הטופס
     let filledAgreement = agreementTemplate;
     for (const [key, value] of Object.entries(formData)) {
         filledAgreement = filledAgreement.replace(`{${key}}`, value);
     }
 
-    // הצגת התוכן המעודכן בתצוגה מקדימה
+    // הצגת תוכן ההסכם בתצוגה מקדימה
     document.getElementById('previewContent').textContent = filledAgreement;
 
     // הצגת תמונת רישיון נהיגה
     const licenseImage = document.getElementById('licenseImage').files[0];
     if (licenseImage) {
         const reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = function(e) {
             document.getElementById('licensePreview').src = e.target.result;
         }
         reader.readAsDataURL(licenseImage);
@@ -62,12 +63,12 @@ function showPreview() {
     // הצגת תמונות הרכב
     const carImages = document.getElementById('carImages').files;
     const carImagesPreview = document.getElementById('carImagesPreview');
-    carImagesPreview.innerHTML = ''; // נקה תמונות קודמות
+    carImagesPreview.innerHTML = ''; // ניקוי תצוגה קודמת
     for (let i = 0; i < carImages.length; i++) {
         const img = document.createElement('img');
         img.classList.add('image-preview');
         const reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = function(e) {
             img.src = e.target.result;
         }
         reader.readAsDataURL(carImages[i]);
@@ -92,44 +93,47 @@ function editForm() {
 
 function generateContract() {
     if (!signaturePad || signaturePad.isEmpty()) {
-        alert("Please sign the contract before generating the PDF.");
+        alert("אנא חתום על החוזה לפני יצירת ה-PDF.");
         return;
     }
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // הגדר גופן תומך עברית
-    doc.addFileToVFS('Roboto-Regular.ttf', fontData);
-    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-    doc.setFont('Roboto');
-
-    // הוספת תוכן ההסכם ל-PDF
+    // הוספת טקסט ההסכם ל-PDF
     const content = document.getElementById('previewContent').textContent;
-    doc.setFontSize(12);
-    doc.text(content, 10, 10, { maxWidth: 190, align: "right" });
+
+    // הוספת הפונט בעברית (צריך לטעון אותו קודם מהשרת או להוסיף את ה-Base64 שלו)
+    doc.addFileToVFS("David-Regular.ttf", /* Base64 של הפונט כאן */);
+    doc.addFont("David-Regular.ttf", "David", "normal");
+    doc.setFont("David", "normal");
+    
+    doc.setFontSize(14);
+    let yPosition = 10; // מיקום y ההתחלתי של הטקסט
+    doc.text(content, 10, yPosition, { maxWidth: 190, align: "right" });
 
     // הוספת תמונת רישיון נהיגה
     const licenseImage = document.getElementById('licensePreview');
     if (licenseImage.src) {
-        doc.addImage(licenseImage.src, 'JPEG', 10, 50, 50, 30);
+        yPosition += 10; // הוספת מרווח לאחר הטקסט
+        doc.addImage(licenseImage.src, 'JPEG', 10, yPosition, 50, 30);
+        yPosition += 40; // התאמת המיקום לאחר התמונה
     }
 
-    // הוספת תמונות רכב
+    // הוספת תמונות הרכב
     const carImages = document.querySelectorAll('#carImagesPreview img');
-    let yPosition = 90;
     carImages.forEach((img) => {
         doc.addImage(img.src, 'JPEG', 10, yPosition, 30, 20);
-        yPosition += 30;
+        yPosition += 30; // התאמת המיקום לאחר כל תמונה
     });
 
-    // הוספת חתימה ל-PDF
+    // הוספת החתימה
     const signatureImage = signaturePad.toDataURL();
     if (signatureImage) {
-        yPosition += 10;
+        yPosition += 10; // הוספת מרווח לחתימה
         doc.addImage(signatureImage, 'PNG', 10, yPosition, 50, 20);
     }
 
     // שמירת ה-PDF
-    doc.save('Rental_Agreement.pdf');
+    doc.save('חוזה_השכרת_רכב.pdf');
 }
