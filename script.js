@@ -99,17 +99,22 @@ function generateContract() {
     }
 
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    const doc = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+        putOnlyUsedFonts: true
+    });
 
-    // הגדרת גופן מתאים לעברית
-    doc.addFileToVFS('Arial.ttf', arialFont); // יש להוסיף גופן תומך עברית
-    doc.addFont('Arial.ttf', 'Arial', 'normal');
-    doc.setFont('Arial');
+    // השתמש בגופן ברירת המחדל 'Helvetica' עם תמיכה בתווים מיוחדים לעברית
+    doc.setFont('Helvetica');
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setR2L(true); // הגדרת טקסט מימין לשמאל עבור עברית
 
     // הוספת תוכן ההסכם ל-PDF
     const content = document.getElementById('previewContent').textContent;
-    doc.setFontSize(12);
-    doc.text(content, 10, 10, { maxWidth: 190, align: "right" });
+    doc.text(10, 10, content, { align: 'right' });
 
     // הוספת תמונת רישיון נהיגה
     const licenseImage = document.getElementById('licensePreview');
