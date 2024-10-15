@@ -51,7 +51,7 @@
         <label for="licenseImage">תמונת רישיון נהיגה:</label>
         <input type="file" id="licenseImage" accept="image/*" required>
 
-        <button type="button" onclick="showPreview()">הצג תצוגה מקדימה של החוזה</button>
+        <button type="button" id="previewButton">הצג תצוגה מקדימה של החוזה</button>
     </form>
 
     <div id="preview" style="display: none;">
@@ -59,9 +59,9 @@
         <div id="previewContent"></div>
         <img id="licensePreview" style="max-width: 300px; margin-top: 20px;">
         <canvas id="signatureCanvas" width="400" height="200"></canvas>
-        <button type="button" onclick="clearSignature()">נקה חתימה</button>
-        <button type="button" onclick="generateContract()">אשר וצור חוזה</button>
-        <button type="button" onclick="editForm()">ערוך פרטים</button>
+        <button type="button" id="clearSignatureButton">נקה חתימה</button>
+        <button type="button" id="generateContractButton">אשר וצור חוזה</button>
+        <button type="button" id="editFormButton">ערוך פרטים</button>
     </div>
 
     <script src="script.js"></script>
