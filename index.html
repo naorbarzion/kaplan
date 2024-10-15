@@ -1,100 +1,85 @@
-// טיפול בשגיאות גלובלי
-window.onerror = function(message, source, lineno, colno, error) {
-    console.error("שגיאה: " + message + " בשורה " + lineno + " במקור " + source);
-    alert("אירעה שגיאה. אנא בדוק את קונסול הדפדפן לפרטים נוספים.");
-};
-
-let signaturePad;
-
-document.addEventListener('DOMContentLoaded', function() {
-    const canvas = document.getElementById('signatureCanvas');
-    signaturePad = new SignaturePad(canvas);
-});
-
-function clearSignature() {
-    signaturePad.clear();
-}
-
-function loadDocxTemplate(url, callback) {
-    console.log("מנסה לטעון קובץ מ:", url);
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function (e) {
-        console.log("סטטוס תגובה:", xhr.status);
-        if (xhr.status === 200) {
-            callback(null, xhr.response);
-        } else {
-            callback(new Error("נכשלה טעינת תבנית ה-DOCX. קוד סטטוס: " + xhr.status), null);
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>טופס השכרת רכב</title>
+    <link rel="shortcut icon" href="data:,">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.29.0/docxtemplater.js"></script>
+    <script src="https://unpkg.com/pizzip@3.1.1/dist/pizzip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background-color: #f0f0f0;
         }
-    };
-    xhr.onerror = function(e) {
-        console.error("שגיאת רשת:", e);
-        callback(new Error("אירעה שגיאת רשת בעת ניסיון לטעון את הקובץ"), null);
-    };
-    xhr.send();
-}
-
-function generateContract() {
-    console.log("פונקציית generateContract נקראה");
-    const name = document.getElementById('name').value;
-    const id = document.getElementById('id').value;
-    const carType = document.getElementById('carType').value;
-    const startKm = document.getElementById('startKm').value;
-    const date = new Date().toLocaleDateString('he-IL');
-    const signature = signaturePad.isEmpty() ? "לא נחתם" : signaturePad.toDataURL();
-
-    if (!name || !id || !carType || !startKm) {
-        alert("אנא מלא את כל השדות הנדרשים");
-        return;
-    }
-
-    if (signaturePad.isEmpty()) {
-        alert("אנא חתום על החוזה לפני היצירה");
-        return;
-    }
-
-    console.log("טוען את תבנית ה-DOCX");
-    loadDocxTemplate('rental1.docx', function (error, content) {
-        if (error) {
-            console.error("שגיאה בטעינת התבנית:", error);
-            alert("אירעה שגיאה בטעינת התבנית. אנא נסה שוב מאוחר יותר.");
-            return;
+        h1 { 
+            color: #333; 
+            text-align: center;
         }
-
-        console.log("תבנית ה-DOCX נטענה בהצלחה, מתחיל עיבוד");
-        try {
-            var zip = new PizZip(content);
-            var doc = new window.docxtemplater(zip, {
-                paragraphLoop: true,
-                linebreaks: true,
-            });
-
-            doc.setData({
-                name: name,
-                id: id,
-                carType: carType,
-                startKm: startKm,
-                date: date,
-                signature: signature
-            });
-
-            console.log("מרנדר את המסמך");
-            doc.render();
-
-            var out = doc.getZip().generate({
-                type: 'blob',
-                mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            });
-
-            console.log("שומר את הקובץ");
-            saveAs(out, 'filled_contract.docx');
-            console.log("הקובץ נשמר בהצלחה");
-        } catch (error) {
-            console.error("שגיאה ביצירת המסמך:", error);
-            alert("אירעה שגיאה ביצירת המסמך. אנא נסה שוב.");
+        form { 
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-    });
-}
+        label { 
+            display: block; 
+            margin-top: 10px; 
+            color: #555;
+        }
+        input { 
+            width: 100%; 
+            padding: 8px; 
+            margin-top: 5px; 
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button { 
+            margin-top: 20px; 
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #signatureCanvas {
+            border: 1px solid #000;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>טופס השכרת רכב</h1>
+    <form id="rentalForm">
+        <label for="name">שם מלא:</label>
+        <input type="text" id="name" required>
 
-console.log("script.js נטען בהצלחה");
+        <label for="id">מספר תעודת זהות:</label>
+        <input type="text" id="id" required>
+
+        <label for="carType">סוג הרכב:</label>
+        <input type="text" id="carType" required>
+
+        <label for="startKm">קילומטראז' התחלתי:</label>
+        <input type="number" id="startKm" required>
+
+        <label for="signature">חתימה:</label>
+        <canvas id="signatureCanvas" width="400" height="200"></canvas>
+        <button type="button" onclick="clearSignature()">נקה חתימה</button>
+
+        <button type="button" onclick="generateContract()">יצירת חוזה</button>
+    </form>
+
+    <script src="script.js"></script>
+</body>
+</html>
