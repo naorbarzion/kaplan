@@ -41,15 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("אנא חתום על ההסכם לפני יצירת המסמך.");
             return;
         }
-        const element = document.getElementById('preview');
-        const opt = {
-            margin: 10,
-            filename: 'הסכם_השכרת_רכב.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(element).save();
+        generatePDF();
     });
 
     clearSignatureButton.addEventListener('click', () => signaturePad.clear());
@@ -86,9 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         // הצגת תבנית ההסכם המלאה
-        const agreementTextElement = document.getElementById('agreementText');
-        agreementTextElement.innerHTML = `<pre class="whitespace-pre-wrap">${template}</pre>`;
-        console.log("Agreement template displayed:", template);
+        document.getElementById('agreementText').innerHTML = `<pre class="whitespace-pre-wrap">${template}</pre>`;
     }
 
     function handleImagesPreview() {
@@ -96,8 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const licensePreview = document.getElementById('licensePreview');
         if (licenseImage) {
             const reader = new FileReader();
-            reader.onload = (e) => licensePreview.src = e.target.result;
+            reader.onload = (e) => {
+                licensePreview.src = e.target.result;
+                licensePreview.style.display = 'block';
+            };
             reader.readAsDataURL(licenseImage);
+        } else {
+            licensePreview.style.display = 'none';
         }
 
         const carImages = document.getElementById('carImages').files;
@@ -116,5 +111,31 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleDisplay(showId, hideId) {
         document.getElementById(showId).style.display = 'block';
         document.getElementById(hideId).style.display = 'none';
+    }
+
+    function generatePDF() {
+        const element = document.getElementById('preview');
+        const opt = {
+            margin: 10,
+            filename: 'הסכם_השכרת_רכב.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // הוספת החתימה לתצוגה המקדימה לפני יצירת ה-PDF
+        const signatureImage = signaturePad.toDataURL();
+        const signatureImg = document.createElement('img');
+        signatureImg.src = signatureImage;
+        signatureImg.style.maxWidth = '100%';
+        signatureImg.style.height = 'auto';
+        const signatureContainer = document.createElement('div');
+        signatureContainer.appendChild(signatureImg);
+        element.appendChild(signatureContainer);
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            // הסרת החתימה מהתצוגה המקדימה לאחר יצירת ה-PDF
+            element.removeChild(signatureContainer);
+        });
     }
 });
