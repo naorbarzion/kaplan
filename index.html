@@ -7,9 +7,19 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap');
+        body, html {
+            font-family: 'Heebo', sans-serif;
+        }
+        .agreement-text {
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-4 max-w-3xl">
+    <div class="container mx-auto p-4 max-w-4xl">
         <h1 class="text-3xl font-bold mb-6 text-center">הסכם השכרת רכב</h1>
         
         <form id="rentalForm" class="bg-white shadow-md rounded px-6 py-4 mb-4">
@@ -74,7 +84,7 @@
                     <img id="licensePreview" class="max-w-full h-auto rounded shadow" alt="תמונת רישיון נהיגה">
                 </div>
             </div>
-            <div id="agreementText" class="mb-4 text-sm border p-3 rounded max-h-60 overflow-y-auto"></div>
+            <div id="agreementText" class="mb-4 agreement-text border p-3 rounded"></div>
             <div class="mb-4">
                 <h3 class="text-lg font-bold mb-2">תמונות הרכב</h3>
                 <div id="carImagesPreview" class="flex flex-wrap gap-2"></div>
