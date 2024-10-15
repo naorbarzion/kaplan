@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('generateContractButton').addEventListener('click', generateContract);
     document.getElementById('editFormButton').addEventListener('click', editForm);
 
-    // Load the agreement template
+    // טען את תבנית החוזה
     fetch('agreement_template.txt')
         .then(response => response.text())
         .then(text => {
@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function showPreview() {
+    // Collect the form data
     const formData = {
         date: document.getElementById('date').value,
         name: document.getElementById('name').value,
@@ -34,22 +35,22 @@ function showPreview() {
         fuelAmount: document.getElementById('fuelAmount').value
     };
 
-    // Check if all required fields are filled
+    // Validate that all fields are filled
     if (Object.values(formData).some(value => !value)) {
-        alert("Please fill out all required fields.");
+        alert("Please fill out all the required fields.");
         return;
     }
 
-    // Fill the agreement with the data from the form
+    // Fill the agreement template with form data
     let filledAgreement = agreementTemplate;
     for (const [key, value] of Object.entries(formData)) {
         filledAgreement = filledAgreement.replace(`{${key}}`, value);
     }
 
-    // Show the filled agreement in preview
+    // Display the agreement content in the preview section
     document.getElementById('previewContent').textContent = filledAgreement;
 
-    // Show the driver's license image preview
+    // Show driver's license image preview
     const licenseImage = document.getElementById('licenseImage').files[0];
     if (licenseImage) {
         const reader = new FileReader();
@@ -59,10 +60,10 @@ function showPreview() {
         reader.readAsDataURL(licenseImage);
     }
 
-    // Show car images in preview
+    // Show car images in the preview
     const carImages = document.getElementById('carImages').files;
     const carImagesPreview = document.getElementById('carImagesPreview');
-    carImagesPreview.innerHTML = ''; // Clear any previous images
+    carImagesPreview.innerHTML = ''; // Clear previous previews
     for (let i = 0; i < carImages.length; i++) {
         const img = document.createElement('img');
         img.classList.add('image-preview');
@@ -92,36 +93,41 @@ function editForm() {
 
 function generateContract() {
     if (!signaturePad || signaturePad.isEmpty()) {
-        alert("Please sign the agreement before generating the contract.");
+        alert("Please sign the contract before generating the PDF.");
         return;
     }
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // Add the agreement content to the PDF
+    // Add the filled agreement text to the PDF
     const content = document.getElementById('previewContent').textContent;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text(content, 10, 10, { maxWidth: 190, align: "right" });
+    let yPosition = 10; // Starting y-position for the text
+    doc.text(content, 10, yPosition, { maxWidth: 190, align: "right" });
 
-    // Add the driver's license image to the PDF
+    // Add driver's license image to the PDF
     const licenseImage = document.getElementById('licensePreview');
     if (licenseImage.src) {
-        doc.addImage(licenseImage.src, 'JPEG', 10, doc.lastAutoTable.finalY + 10, 50, 30);
+        yPosition += 10; // Add some space after the text
+        doc.addImage(licenseImage.src, 'JPEG', 10, yPosition, 50, 30);
+        yPosition += 40; // Adjust y-position after the image
     }
 
-    // Add the car images to the PDF
+    // Add car images to the PDF
     const carImages = document.querySelectorAll('#carImagesPreview img');
-    let yPosition = doc.lastAutoTable.finalY + 50;
     carImages.forEach((img) => {
         doc.addImage(img.src, 'JPEG', 10, yPosition, 30, 20);
-        yPosition += 30;
+        yPosition += 30; // Adjust y-position after each image
     });
 
     // Add the signature to the PDF
     const signatureImage = signaturePad.toDataURL();
-    doc.addImage(signatureImage, 'PNG', 10, yPosition, 50, 20);
+    if (signatureImage) {
+        yPosition += 10; // Add space for the signature
+        doc.addImage(signatureImage, 'PNG', 10, yPosition, 50, 20);
+    }
 
     // Save the PDF
     doc.save('Rental_Agreement.pdf');
