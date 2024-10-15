@@ -13,14 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const signaturePad = new SignaturePad(signatureCanvas);
     let agreementTemplate = '';
 
-    // Load the agreement template
+    // טעינת תבנית ההסכם
     fetch('agreement_template.txt')
         .then(response => response.text())
         .then(text => {
             agreementTemplate = text;
+            console.log("Template loaded successfully");
         })
-        .catch(() => {
-            console.error("Error loading agreement template.");
+        .catch((error) => {
+            console.error("Error loading agreement template:", error);
             agreementTemplate = "תנאי החוזה לא נטענו בהצלחה. אנא צור קשר עם מנהל המערכת.";
         });
 
@@ -60,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
             date: document.getElementById('date').value,
             name: document.getElementById('name').value,
             id: document.getElementById('id').value,
-            address: document.getElementById('address').value,
             phone: document.getElementById('phone').value,
             carType: document.getElementById('carType').value,
             startKm: document.getElementById('startKm').value,
@@ -75,21 +75,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function fillPreview(formData, template) {
         document.getElementById('clientDetails').innerHTML = `
-            <div class="grid grid-cols-2 gap-4">
-                <p><strong>תאריך:</strong> ${formData.date}</p>
-                <p><strong>שם מלא:</strong> ${formData.name}</p>
-                <p><strong>ת.ז:</strong> ${formData.id}</p>
-                <p><strong>כתובת:</strong> ${formData.address}</p>
-                <p><strong>טלפון:</strong> ${formData.phone}</p>
-                <p><strong>סוג רכב:</strong> ${formData.carType}</p>
-                <p><strong>קילומטרים בתחילת הנסיעה:</strong> ${formData.startKm}</p>
-                <p><strong>שעת יציאה:</strong> ${formData.startTime}</p>
-                <p><strong>כמות דלק:</strong> ${formData.fuelAmount}</p>
-            </div>
+            <p><strong>תאריך:</strong> ${formData.date}</p>
+            <p><strong>שם מלא:</strong> ${formData.name}</p>
+            <p><strong>ת.ז:</strong> ${formData.id}</p>
+            <p><strong>טלפון:</strong> ${formData.phone}</p>
+            <p><strong>סוג רכב:</strong> ${formData.carType}</p>
+            <p><strong>ק"מ התחלתי:</strong> ${formData.startKm}</p>
+            <p><strong>שעת יציאה:</strong> ${formData.startTime}</p>
+            <p><strong>כמות דלק:</strong> ${formData.fuelAmount}</p>
         `;
 
-        // Display the full agreement template
-        document.getElementById('agreementText').innerHTML = `<pre class="whitespace-pre-wrap">${template}</pre>`;
+        // הצגת תבנית ההסכם המלאה
+        const agreementTextElement = document.getElementById('agreementText');
+        agreementTextElement.innerHTML = `<pre class="whitespace-pre-wrap">${template}</pre>`;
+        console.log("Agreement template displayed:", template);
     }
 
     function handleImagesPreview() {
