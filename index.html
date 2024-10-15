@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Rental Form</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.1/pizzip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.24.0/docxtemplater.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+    <h1>Car Rental Form</h1>
+    <form id="rentalForm" onsubmit="event.preventDefault(); generateContract();">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="id">ID Number:</label>
+        <input type="text" id="id" name="id" required><br><br>
+
+        <label for="carType">Car Type:</label>
+        <input type="text" id="carType" name="carType" required><br><br>
+
+        <label for="startKm">Starting Kilometer:</label>
+        <input type="text" id="startKm" name="startKm" required><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Download Contract</h2>
+    <button onclick="downloadContract()">Download Filled Contract</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
