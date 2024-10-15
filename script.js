@@ -1,9 +1,3 @@
-// טיפול בשגיאות גלובלי
-window.onerror = function(message, source, lineno, colno, error) {
-    console.error("שגיאה: " + message + " בשורה " + lineno + " במקור " + source);
-    alert("אירעה שגיאה. אנא בדוק את קונסול הדפדפן לפרטים נוספים.");
-};
-
 let signaturePad;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -11,90 +5,107 @@ document.addEventListener('DOMContentLoaded', function() {
     signaturePad = new SignaturePad(canvas);
 });
 
-function clearSignature() {
-    signaturePad.clear();
-}
-
-function loadDocxTemplate(url, callback) {
-    console.log("מנסה לטעון קובץ מ:", url);
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function (e) {
-        console.log("סטטוס תגובה:", xhr.status);
-        if (xhr.status === 200) {
-            callback(null, xhr.response);
-        } else {
-            callback(new Error("נכשלה טעינת תבנית ה-DOCX. קוד סטטוס: " + xhr.status), null);
-        }
+function showPreview() {
+    const formData = {
+        date: document.getElementById('date').value,
+        name: document.getElementById('name').value,
+        id: document.getElementById('id').value,
+        address: document.getElementById('address').value,
+        phone: document.getElementById('phone').value,
+        carType: document.getElementById('carType').value,
+        startKm: document.getElementById('startKm').value,
+        startTime: document.getElementById('startTime').value,
+        fuelAmount: document.getElementById('fuelAmount').value
     };
-    xhr.onerror = function(e) {
-        console.error("שגיאת רשת:", e);
-        callback(new Error("אירעה שגיאת רשת בעת ניסיון לטעון את הקובץ"), null);
-    };
-    xhr.send();
-}
 
-function generateContract() {
-    console.log("פונקציית generateContract נקראה");
-    const name = document.getElementById('name').value;
-    const id = document.getElementById('id').value;
-    const carType = document.getElementById('carType').value;
-    const startKm = document.getElementById('startKm').value;
-    const date = new Date().toLocaleDateString('he-IL');
-    const signature = signaturePad.isEmpty() ? "לא נחתם" : signaturePad.toDataURL();
-
-    if (!name || !id || !carType || !startKm) {
+    if (Object.values(formData).some(value => !value)) {
         alert("אנא מלא את כל השדות הנדרשים");
         return;
     }
 
+    // טען את תבנית החוזה
+    loadFile('agreement_template.docx', function(error, content) {
+        if (error) {
+            console.error("שגיאה בטעינת תבנית החוזה:", error);
+            alert("אירעה שגיאה בטעינת החוזה. אנא נסה שוב מאוחר יותר.");
+            return;
+        }
+
+        // מלא את פרטי החוזה
+        const filledAgreement = fillAgreementTemplate(content, formData);
+        
+        // הצג את החוזה המלא
+        document.getElementById('previewContent').textContent = filledAgreement;
+        
+        // הצג את תמונת הרישיון
+        const licenseImage = document.getElementById('licenseImage').files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('licensePreview').src = e.target.result;
+        }
+        reader.readAsDataURL(licenseImage);
+
+        document.getElementById('preview').style.display = 'block';
+        document.getElementById('rentalForm').style.display = 'none';
+    });
+}
+
+function fillAgreementTemplate(template, data) {
+    // כאן תהיה הלוגיקה למילוי התבנית עם הנתונים
+    // לצורך הדוגמה, נחזיר פשוט את הנתונים כטקסט
+    return `חוזה השכרת רכב:
+    תאריך: ${data.date}
+    שם: ${data.name}
+    ת.ז: ${data.id}
+    כתובת: ${data.address}
+    טלפון: ${data.phone}
+    סוג רכב: ${data.carType}
+    קילומטראז' התחלתי: ${data.startKm}
+    שעת יציאה: ${data.startTime}
+    כמות דלק: ${data.fuelAmount}
+    
+    // כאן יבוא תוכן החוזה המלא
+    `;
+}
+
+function clearSignature() {
+    signaturePad.clear();
+}
+
+function editForm() {
+    document.getElementById('preview').style.display = 'none';
+    document.getElementById('rentalForm').style.display = 'block';
+}
+
+function generateContract() {
     if (signaturePad.isEmpty()) {
         alert("אנא חתום על החוזה לפני היצירה");
         return;
     }
 
-    console.log("טוען את תבנית ה-DOCX");
-    loadDocxTemplate('rental1.docx', function (error, content) {
-        if (error) {
-            console.error("שגיאה בטעינת התבנית:", error);
-            alert("אירעה שגיאה בטעינת התבנית. אנא נסה שוב מאוחר יותר.");
-            return;
-        }
+    // כאן תהיה הלוגיקה ליצירת קובץ DOCX סופי עם החתימה
+    // לצורך הדוגמה, נשמור רק את החתימה כתמונה
+    const signatureImage = signaturePad.toDataURL();
+    
+    // שמירת החתימה כתמונה (לדוגמה בלבד)
+    const link = document.createElement('a');
+    link.href = signatureImage;
+    link.download = 'signature.png';
+    link.click();
 
-        console.log("תבנית ה-DOCX נטענה בהצלחה, מתחיל עיבוד");
-        try {
-            var zip = new PizZip(content);
-            var doc = new window.docxtemplater(zip, {
-                paragraphLoop: true,
-                linebreaks: true,
-            });
-
-            doc.setData({
-                name: name,
-                id: id,
-                carType: carType,
-                startKm: startKm,
-                date: date,
-                signature: signature
-            });
-
-            console.log("מרנדר את המסמך");
-            doc.render();
-
-            var out = doc.getZip().generate({
-                type: 'blob',
-                mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            });
-
-            console.log("שומר את הקובץ");
-            saveAs(out, 'filled_contract.docx');
-            console.log("הקובץ נשמר בהצלחה");
-        } catch (error) {
-            console.error("שגיאה ביצירת המסמך:", error);
-            alert("אירעה שגיאה ביצירת המסמך. אנא נסה שוב.");
-        }
-    });
+    alert("החוזה נוצר בהצלחה!");
 }
 
-console.log("script.js נטען בהצלחה");
+function loadFile(url, callback) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            callback(null, xhr.response);
+        } else {
+            callback(new Error("Failed to load file"), null);
+        }
+    };
+    xhr.send();
+}
