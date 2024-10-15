@@ -79,6 +79,20 @@ function showPreview() {
     // הצגת התצוגה המקדימה והסתרת הטופס
     document.getElementById('preview').style.display = 'block';
     document.getElementById('rentalForm').style.display = 'none';
+
+    // הצגת פרטי הלקוח בתצוגה בשלב השני
+    document.getElementById('clientDetails').innerHTML = `
+        <h3>פרטי הלקוח</h3>
+        <p>תאריך: ${formData.date}</p>
+        <p>שם: ${formData.name}</p>
+        <p>ת.ז: ${formData.id}</p>
+        <p>כתובת: ${formData.address}</p>
+        <p>טלפון: ${formData.phone}</p>
+        <p>סוג רכב: ${formData.carType}</p>
+        <p>קילומטרים בתחילת הנסיעה: ${formData.startKm}</p>
+        <p>שעת התחלה: ${formData.startTime}</p>
+        <p>כמות דלק: ${formData.fuelAmount}</p>
+    `;
 }
 
 function clearSignature() {
@@ -94,49 +108,46 @@ function editForm() {
 
 function generateContract() {
     if (!signaturePad || signaturePad.isEmpty()) {
-        alert("Please sign the contract before generating the PDF.");
+        alert("Please sign the contract before generating the document.");
         return;
     }
 
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-        putOnlyUsedFonts: true
-    });
-
-    // השתמש בגופן ברירת המחדל 'Helvetica' עם תמיכה בתווים מיוחדים לעברית
-    doc.setFont('Helvetica');
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.setR2L(true); // הגדרת טקסט מימין לשמאל עבור עברית
-
-    // הוספת תוכן ההסכם ל-PDF
+    // Collect the agreement content and user details
     const content = document.getElementById('previewContent').textContent;
-    doc.text(10, 10, content, { align: 'right' });
-
-    // הוספת תמונת רישיון נהיגה
-    const licenseImage = document.getElementById('licensePreview');
-    if (licenseImage.src) {
-        doc.addImage(licenseImage.src, 'JPEG', 10, 50, 50, 30);
-    }
-
-    // הוספת תמונות רכב
-    const carImages = document.querySelectorAll('#carImagesPreview img');
-    let yPosition = 90;
-    carImages.forEach((img) => {
-        doc.addImage(img.src, 'JPEG', 10, yPosition, 30, 20);
-        yPosition += 30;
-    });
-
-    // הוספת חתימה ל-PDF
     const signatureImage = signaturePad.toDataURL();
-    if (signatureImage) {
-        yPosition += 10;
-        doc.addImage(signatureImage, 'PNG', 10, yPosition, 50, 20);
-    }
 
-    // שמירת ה-PDF
-    doc.save('Rental_Agreement.pdf');
+    // אפשרות 1: שמירת המסמך בפורמט Word
+    const docContent = `
+    <h2>הסכם השכרה</h2>
+    <p>${content}</p>
+    <h3>חתימת הלקוח:</h3>
+    <img src="${signatureImage}" width="200" height="50" />
+    `;
+
+    const wordBlob = new Blob(['\ufeff', docContent], { type: 'application/msword' });
+    const url = URL.createObjectURL(wordBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Rental_Agreement.docx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // אפשרות 2: שמירת המסמך בפורמט TXT
+    const txtContent = `
+הסכם השכרה:
+${content}
+
+חתימת הלקוח:
+[חתימה מצורפת בקובץ נפרד]
+    `;
+
+    const txtBlob = new Blob([txtContent], { type: 'text/plain' });
+    const txtUrl = URL.createObjectURL(txtBlob);
+    const txtLink = document.createElement('a');
+    txtLink.href = txtUrl;
+    txtLink.download = 'Rental_Agreement.txt';
+    document.body.appendChild(txtLink);
+    txtLink.click();
+    document.body.removeChild(txtLink);
 }
