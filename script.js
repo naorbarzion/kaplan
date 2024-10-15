@@ -35,6 +35,7 @@ function showPreview() {
         fuelAmount: document.getElementById('fuelAmount').value
     };
 
+    // Validate that all fields are filled
     if (Object.values(formData).some(value => !value)) {
         alert("Please fill out all the required fields.");
         return;
@@ -43,7 +44,8 @@ function showPreview() {
     // מלא את תבנית החוזה בנתונים מהטופס
     let filledAgreement = agreementTemplate;
     for (const [key, value] of Object.entries(formData)) {
-        filledAgreement = filledAgreement.replace(`{${key}}`, value);
+        const regex = new RegExp(`{${key}}`, 'g');
+        filledAgreement = filledAgreement.replace(regex, value);
     }
 
     // הצגת התוכן המעודכן בתצוגה מקדימה
@@ -99,10 +101,10 @@ function generateContract() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // הגדר גופן תומך עברית
-    doc.addFileToVFS('Roboto-Regular.ttf', fontData);
-    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-    doc.setFont('Roboto');
+    // הגדרת גופן מתאים לעברית
+    doc.addFileToVFS('Arial.ttf', arialFont); // יש להוסיף גופן תומך עברית
+    doc.addFont('Arial.ttf', 'Arial', 'normal');
+    doc.setFont('Arial');
 
     // הוספת תוכן ההסכם ל-PDF
     const content = document.getElementById('previewContent').textContent;
