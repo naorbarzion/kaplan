@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.29.0/docxtemplater.js"></script>
     <script src="https://unpkg.com/pizzip@3.1.1/dist/pizzip.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
@@ -16,6 +17,7 @@
         button { margin-top: 20px; padding: 10px 15px; }
         #signatureCanvas { border: 1px solid #000; }
         #previewContent { white-space: pre-wrap; }
+        .image-preview { max-width: 200px; max-height: 200px; margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -51,13 +53,20 @@
         <label for="licenseImage">תמונת רישיון נהיגה:</label>
         <input type="file" id="licenseImage" accept="image/*" required>
 
+        <label for="carImages">תמונות של הרכב ביציאה:</label>
+        <input type="file" id="carImages" accept="image/*" multiple>
+
         <button type="button" id="previewButton">הצג תצוגה מקדימה של החוזה</button>
     </form>
 
     <div id="preview" style="display: none;">
         <h2>תצוגה מקדימה של החוזה</h2>
         <div id="previewContent"></div>
-        <img id="licensePreview" style="max-width: 300px; margin-top: 20px;">
+        <h3>תמונת רישיון נהיגה:</h3>
+        <img id="licensePreview" class="image-preview">
+        <h3>תמונות הרכב:</h3>
+        <div id="carImagesPreview"></div>
+        <h3>חתימה:</h3>
         <canvas id="signatureCanvas" width="400" height="200"></canvas>
         <button type="button" id="clearSignatureButton">נקה חתימה</button>
         <button type="button" id="generateContractButton">אשר וצור חוזה</button>
