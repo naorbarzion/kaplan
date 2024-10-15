@@ -40,56 +40,63 @@ function showPreview() {
     }
 
     // מלא את פרטי החוזה
-    const filledAgreement = fillAgreementTemplate(agreementTemplate, formData);
-    
-    // הצג את החוזה המלא
-    document.getElementById('previewContent').textContent = filledAgreement;
-    
-    // הצג את תמונת הרישיון
-    const licenseImage = document.getElementById('licenseImage').files[0];
-    if (licenseImage) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('licensePreview').src = e.target.result;
+    fillAgreementTemplate(agreementTemplate, formData).then(filledAgreement => {
+        // הצג את החוזה המלא
+        document.getElementById('previewContent').textContent = filledAgreement;
+        
+        // הצג את תמונת הרישיון
+        const licenseImage = document.getElementById('licenseImage').files[0];
+        if (licenseImage) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('licensePreview').src = e.target.result;
+            }
+            reader.readAsDataURL(licenseImage);
         }
-        reader.readAsDataURL(licenseImage);
-    }
 
-    // הצג את תמונות הרכב
-    const carImages = document.getElementById('carImages').files;
-    const carImagesPreview = document.getElementById('carImagesPreview');
-    carImagesPreview.innerHTML = '';
-    for (let i = 0; i < carImages.length; i++) {
-        const img = document.createElement('img');
-        img.classList.add('image-preview');
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            img.src = e.target.result;
+        // הצג את תמונות הרכב
+        const carImages = document.getElementById('carImages').files;
+        const carImagesPreview = document.getElementById('carImagesPreview');
+        carImagesPreview.innerHTML = '';
+        for (let i = 0; i < carImages.length; i++) {
+            const img = document.createElement('img');
+            img.classList.add('image-preview');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(carImages[i]);
+            carImagesPreview.appendChild(img);
         }
-        reader.readAsDataURL(carImages[i]);
-        carImagesPreview.appendChild(img);
-    }
 
-    document.getElementById('preview').style.display = 'block';
-    document.getElementById('rentalForm').style.display = 'none';
+        document.getElementById('preview').style.display = 'block';
+        document.getElementById('rentalForm').style.display = 'none';
+    });
 }
 
-function fillAgreementTemplate(template, data) {
-    // כאן תהיה הלוגיקה למילוי התבנית עם הנתונים
-    // לצורך הדוגמה, נחזיר פשוט את הנתונים כטקסט
-    return `חוזה השכרת רכב:
-    תאריך: ${data.date}
-    שם: ${data.name}
-    ת.ז: ${data.id}
-    כתובת: ${data.address}
-    טלפון: ${data.phone}
-    סוג רכב: ${data.carType}
-    קילומטראז' התחלתי: ${data.startKm}
-    שעת יציאה: ${data.startTime}
-    כמות דלק: ${data.fuelAmount}
-    
-    // כאן יבוא תוכן החוזה המלא
-    `;
+async function fillAgreementTemplate(template, data) {
+    return new Promise((resolve, reject) => {
+        try {
+            const zip = new PizZip(template);
+            const doc = new window.docxtemplater(zip, {
+                paragraphLoop: true,
+                linebreaks: true,
+            });
+
+            doc.setData(data);
+            doc.render();
+
+            const output = doc.getZip().generate({type: 'blob'});
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                resolve(e.target.result);
+            };
+            reader.readAsText(output);
+        } catch (error) {
+            console.error("שגיאה במילוי תבנית החוזה:", error);
+            reject(error);
+        }
+    });
 }
 
 function clearSignature() {
@@ -103,7 +110,7 @@ function editForm() {
     document.getElementById('rentalForm').style.display = 'block';
 }
 
-function generateContract() {
+async function generateContract() {
     if (!signaturePad || signaturePad.isEmpty()) {
         alert("אנא חתום על החוזה לפני היצירה");
         return;
@@ -118,22 +125,45 @@ function generateContract() {
 
     // הוסף את תמונת רישיון הנהיגה
     const licenseImage = document.getElementById('licensePreview');
-    doc.addImage(licenseImage, 'JPEG', 10, 100, 50, 30);
+    await addImageToPdf(doc, licenseImage, 10, 100, 50, 30);
 
     // הוסף את תמונות הרכב
     const carImages = document.querySelectorAll('#carImagesPreview img');
     let yPosition = 140;
-    carImages.forEach((img, index) => {
-        doc.addImage(img, 'JPEG', 10, yPosition, 30, 20);
+    for (let img of carImages) {
+        await addImageToPdf(doc, img, 10, yPosition, 30, 20);
         yPosition += 30;
-    });
+    }
 
     // הוסף את החתימה
     const signatureImage = signaturePad.toDataURL();
-    doc.addImage(signatureImage, 'PNG', 10, yPosition, 50, 20);
+    await addImageToPdf(doc, signatureImage, 10, yPosition, 50, 20);
 
     // שמור את הקובץ
     doc.save('חוזה_השכרת_רכב.pdf');
+}
+
+function addImageToPdf(doc, imgElement, x, y, width, height) {
+    return new Promise((resolve, reject) => {
+        try {
+            if (typeof imgElement === 'string') {
+                // אם זו חתימה (DataURL)
+                doc.addImage(imgElement, 'PNG', x, y, width, height);
+                resolve();
+            } else {
+                // אם זו תמונה רגילה
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    doc.addImage(event.target.result, 'JPEG', x, y, width, height);
+                    resolve();
+                };
+                reader.readAsDataURL(imgElement.files[0]);
+            }
+        } catch (error) {
+            console.error("שגיאה בהוספת תמונה ל-PDF:", error);
+            reject(error);
+        }
+    });
 }
 
 function loadFile(url, callback) {
