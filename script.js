@@ -39,11 +39,13 @@ function showPreview() {
         
         // הצג את תמונת הרישיון
         const licenseImage = document.getElementById('licenseImage').files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('licensePreview').src = e.target.result;
+        if (licenseImage) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('licensePreview').src = e.target.result;
+            }
+            reader.readAsDataURL(licenseImage);
         }
-        reader.readAsDataURL(licenseImage);
 
         document.getElementById('preview').style.display = 'block';
         document.getElementById('rentalForm').style.display = 'none';
@@ -69,7 +71,9 @@ function fillAgreementTemplate(template, data) {
 }
 
 function clearSignature() {
-    signaturePad.clear();
+    if (signaturePad) {
+        signaturePad.clear();
+    }
 }
 
 function editForm() {
@@ -78,7 +82,7 @@ function editForm() {
 }
 
 function generateContract() {
-    if (signaturePad.isEmpty()) {
+    if (!signaturePad || signaturePad.isEmpty()) {
         alert("אנא חתום על החוזה לפני היצירה");
         return;
     }
@@ -109,3 +113,5 @@ function loadFile(url, callback) {
     };
     xhr.send();
 }
+
+console.log("script.js נטען בהצלחה");
