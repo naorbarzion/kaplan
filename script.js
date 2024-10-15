@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // תופס את האלמנטים השונים בדף
     const previewButton = document.getElementById('previewButton');
     const clearSignatureButton = document.getElementById('clearSignatureButton');
     const generatePDFButton = document.getElementById('generatePDFButton');
     const editFormButton = document.getElementById('editFormButton');
 
-    // בדיקה האם כל האלמנטים קיימים
-    if (!previewButton || !clearSignatureButton || !generatePDFButton || !editFormButton) {
+    // בדוק שכל האלמנטים קיימים לפני ההפעלה
+    if (!previewButton || !generatePDFButton || !editFormButton) {
         console.error("Element(s) not found in the document.");
         return;
     }
@@ -20,11 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(text => agreementTemplate = text)
         .catch(() => alert("Error loading agreement template."));
 
-    // פונקציה להצגת התצוגה המקדימה
+    // פונקציה להצגת תצוגה מקדימה
     previewButton.addEventListener('click', () => {
         const formData = getFormData();
         if (!isFormValid(formData)) {
-            alert("Please fill out all the required fields.");
+            alert("אנא מלא את כל השדות הנדרשים.");
             return;
         }
         fillPreview(formData, agreementTemplate);
@@ -32,21 +31,21 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleDisplay('preview', 'rentalForm');
     });
 
-    // פונקציה לניקוי החתימה
-    clearSignatureButton.addEventListener('click', () => signaturePad.clear());
-
-    // פונקציה לעריכת הטופס מחדש
-    editFormButton.addEventListener('click', () => toggleDisplay('rentalForm', 'preview'));
-
-    // פונקציה ליצירת PDF מהתצוגה המקדימה
+    // פונקציה ליצירת PDF
     generatePDFButton.addEventListener('click', () => {
         if (signaturePad.isEmpty()) {
-            alert("Please sign the contract before generating the document.");
+            alert("אנא חתום על ההסכם לפני יצירת המסמך.");
             return;
         }
         const element = document.getElementById('preview');
         html2pdf().from(element).save('Rental_Agreement.pdf');
     });
+
+    // פונקציה לניקוי חתימה
+    clearSignatureButton?.addEventListener('click', () => signaturePad.clear());
+
+    // עריכת הטופס מחדש
+    editFormButton.addEventListener('click', () => toggleDisplay('rentalForm', 'preview'));
 
     // פונקציות עזר
     function getFormData() {
@@ -67,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return Object.values(formData).every(value => value);
     }
 
-    // ממלאת את פרטי הלקוח בתצוגה מקדימה
+    // ממלא את פרטי הלקוח בתצוגה מקדימה
     function fillPreview(formData, template) {
         let filledAgreement = template;
         Object.entries(formData).forEach(([key, value]) => {
@@ -87,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // הצגת תמונות רישיון נהיגה ותמונות הרכב בתצוגה המקדימה
+    // הצגת תמונות רישיון נהיגה ותמונות הרכב בתצוגה מקדימה
     function handleImagesPreview() {
         const licenseImage = document.getElementById('licenseImage').files[0];
         const licensePreview = document.getElementById('licensePreview');
@@ -110,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // שינוי התצוגה בין הטופס לתצוגה מקדימה
+    // פונקציה להחלפת התצוגה בין הטופס לתצוגה מקדימה
     function toggleDisplay(showId, hideId) {
         document.getElementById(showId).style.display = 'block';
         document.getElementById(hideId).style.display = 'none';
