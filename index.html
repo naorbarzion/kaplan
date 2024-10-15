@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>חוזה השכרת רכב</title>
+
+    <!-- טעינת ספריית SignaturePad -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    
+    <!-- טעינת ספריית html2pdf -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
     <style>
         body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
         h1, h2 { text-align: center; color: #333; }
@@ -91,15 +97,9 @@
         </div>
 
         <button id="generatePDFButton">שמור כ-PDF</button>
-
+        <button type="button" id="editFormButton">ערוך פרטים</button>
     </div>
 
     <script src="script.js"></script>
-    <script>
-        document.getElementById('generatePDFButton').addEventListener('click', function () {
-            const element = document.body;
-            html2pdf().from(element).save();
-        });
-    </script>
 </body>
 </html>
