@@ -3,22 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>טופס השכרת רכב</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <title>חוזה השכרת רכב</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1, h2 { text-align: center; color: #333; }
         form, #preview { background-color: #f0f0f0; padding: 20px; border-radius: 8px; margin-top: 20px; }
-        label { display: block; margin-top: 10px; }
-        input, select { width: 100%; padding: 8px; margin-top: 5px; }
-        button { margin-top: 20px; padding: 10px 15px; }
-        #signatureCanvas { border: 1px solid #000; }
-        #previewContent { white-space: pre-wrap; }
-        .image-preview { max-width: 200px; max-height: 200px; margin: 10px 0; }
+        .contract-section { margin-bottom: 20px; }
+        .contract-section h3 { border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .contract-section p { margin: 5px 0; }
+        label { font-weight: bold; margin-top: 10px; display: block; }
+        input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        button { margin-top: 20px; padding: 10px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .image-preview { max-width: 200px; max-height: 200px; margin-top: 10px; }
+        #signatureCanvas { border: 1px solid #000; margin-top: 20px; }
+        #clientDetails { white-space: pre-wrap; padding: 15px; border: 1px solid #ccc; margin-bottom: 20px; background-color: #f1f1f1; border-radius: 8px; }
+        .page-footer { text-align: center; margin-top: 40px; font-size: 12px; color: #666; }
     </style>
 </head>
 <body>
-    <h1>טופס השכרת רכב</h1>
+
+    <h1>הסכם השכרת רכב</h1>
+
     <form id="rentalForm">
         <label for="date">תאריך:</label>
         <input type="date" id="date" required>
@@ -45,7 +52,7 @@
         <input type="time" id="startTime" required>
 
         <label for="fuelAmount">כמות דלק:</label>
-        <input type="number" id="fuelAmount" required> <!-- שינוי ל-input מספרי -->
+        <input type="number" id="fuelAmount" required>
 
         <label for="licenseImage">תמונת רישיון נהיגה:</label>
         <input type="file" id="licenseImage" accept="image/*" required>
@@ -58,22 +65,41 @@
 
     <div id="preview" style="display: none;">
         <h2>תצוגה מקדימה של החוזה</h2>
-        <div id="previewContent"></div>
 
-        <h3>פרטי הלקוח:</h3>
-        <div id="clientDetails"></div> <!-- הוספת אלמנט להצגת פרטי הלקוח -->
+        <div class="contract-section">
+            <h3>פרטי הלקוח</h3>
+            <div id="clientDetails"></div>
+        </div>
 
-        <h3>תמונת רישיון נהיגה:</h3>
-        <img id="licensePreview" class="image-preview">
-        <h3>תמונות הרכב:</h3>
-        <div id="carImagesPreview"></div>
-        <h3>חתימה:</h3>
-        <canvas id="signatureCanvas" width="400" height="200"></canvas>
-        <button type="button" id="clearSignatureButton">נקה חתימה</button>
-        <button type="button" id="generateContractButton">אשר וצור חוזה</button>
-        <button type="button" id="editFormButton">ערוך פרטים</button>
+        <div class="contract-section">
+            <h3>תמונת רישיון נהיגה</h3>
+            <img id="licensePreview" class="image-preview">
+        </div>
+
+        <div class="contract-section">
+            <h3>תמונות הרכב</h3>
+            <div id="carImagesPreview"></div>
+        </div>
+
+        <div class="contract-section">
+            <h3>חתימת הלקוח</h3>
+            <canvas id="signatureCanvas" width="400" height="200"></canvas>
+        </div>
+
+        <div class="page-footer">
+            <p>כל הזכויות שמורות © 2024</p>
+        </div>
+
+        <button id="generatePDFButton">שמור כ-PDF</button>
+
     </div>
 
     <script src="script.js"></script>
+    <script>
+        document.getElementById('generatePDFButton').addEventListener('click', function () {
+            const element = document.body;
+            html2pdf().from(element).save();
+        });
+    </script>
 </body>
 </html>
