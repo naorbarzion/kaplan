@@ -5,8 +5,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const signaturePad = document.getElementById('signaturePad');
     const context = signaturePad.getContext('2d');
     const agreementDetails = document.getElementById('agreementDetails');
+    const contractContent = document.getElementById('contractContent');
 
-    // שליחת הטופס והמעבר לשלב ב'
+    // שלב א' - שליחת הטופס והמעבר לשלב ב'
     form.addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         agreementHTML += `<p><strong>תמונת רישיון נהיגה:</strong></p><img src="${rentalData.licenseImage}" alt="רישיון נהיגה" style="max-width: 200px;"/>`;
+
         agreementDetails.innerHTML = agreementHTML;
 
         // מעבר לשלב ב'
