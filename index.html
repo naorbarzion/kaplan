@@ -9,53 +9,56 @@
             font-family: Arial, sans-serif;
             direction: rtl;
             text-align: right;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
+            margin: 0;
             padding: 20px;
-            border: 1px solid #ccc;
             background-color: #f9f9f9;
         }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
         input, select, textarea {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
+            padding: 8px;
+            margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .signature-pad {
+            border: 1px solid black;
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
         button {
-            padding: 10px 20px;
+            padding: 10px 15px;
             background-color: #4CAF50;
             color: white;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
         }
-
         button:hover {
             background-color: #45a049;
-        }
-
-        .signature-pad {
-            border: 1px solid #000;
-            width: 100%;
-            height: 200px;
-            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
         <h1>הסכם השכרת רכב</h1>
+        
+        <!-- טופס למילוי פרטים -->
         <form id="rentalForm">
+            <!-- שדות פרטי השוכר -->
             <label for="date">תאריך:</label>
             <input type="date" id="date" name="date" required>
 
@@ -66,7 +69,7 @@
             <input type="number" id="kmOut" name="kmOut" required>
 
             <label for="kmIn">קילומטר בחזרה:</label>
-            <input type="number" id="kmIn" name="kmIn">
+            <input type="number" id="kmIn" name="kmIn" disabled value="ימולא בזמן החזרת הרכב">
 
             <label for="timeOut">שעת יציאה:</label>
             <input type="time" id="timeOut" name="timeOut" required>
@@ -86,6 +89,7 @@
             <label for="phone">טלפון:</label>
             <input type="tel" id="phone" name="phone" required>
 
+            <!-- שדות ביטוח -->
             <label>בחר מסלול ביטוח:</label>
             <select id="insurancePlan" name="insurancePlan" required>
                 <option value="planA">0 ₪ מסלול ביטוח חלקי א'</option>
@@ -93,16 +97,19 @@
                 <option value="planC">189 ₪ מסלול ביטוח מלא עם השתתפות עצמית</option>
             </select>
 
+            <!-- העלאת תמונות -->
             <label for="carImages">תמונות רכב ביציאה:</label>
             <input type="file" id="carImages" name="carImages" accept="image/*" multiple required>
 
             <label for="licenseImage">תמונת רישיון נהיגה:</label>
             <input type="file" id="licenseImage" name="licenseImage" accept="image/*" required>
 
+            <!-- חתימה דיגיטלית -->
             <label>חתימה:</label>
             <canvas id="signaturePad" class="signature-pad"></canvas>
             <button type="button" onclick="clearSignature()">נקה חתימה</button>
 
+            <!-- שליחת הטופס -->
             <button type="submit">שלח</button>
         </form>
     </div>
@@ -119,8 +126,10 @@
         // תהליך שליחת הטופס
         document.getElementById('rentalForm').addEventListener('submit', function(event) {
             event.preventDefault();
+
+            // כאן תתווסף לוגיקה לשמירת הנתונים
+
             alert('ההסכם נשלח בהצלחה!');
-            // כאן אפשר להוסיף לוגיקה לשמירת הנתונים
         });
     </script>
 </body>
