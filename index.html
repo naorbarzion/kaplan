@@ -10,7 +10,6 @@
             direction: rtl;
             text-align: right;
             margin: 20px;
-            padding: 0;
             background-color: #f9f9f9;
         }
         .container {
@@ -26,11 +25,6 @@
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-        }
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
         }
         button {
             padding: 10px 15px;
@@ -52,86 +46,83 @@
     </style>
 </head>
 <body>
-
-    <div class="container" id="agreement">
-        <h1>הסכם השכרת רכב</h1>
-
-        <!-- שדות למילוי -->
-        <label for="date">תאריך:</label>
-        <input type="date" id="date" name="date" required>
-
-        <label for="carType">סוג רכב:</label>
-        <input type="text" id="carType" name="carType" required>
-
-        <label for="kmOut">קילומטר ביציאה:</label>
-        <input type="number" id="kmOut" name="kmOut" required>
-
-        <label for="kmIn">קילומטר בחזרה:</label>
-        <input type="number" id="kmIn" name="kmIn" disabled value="ימולא בזמן החזרת הרכב">
-
-        <label for="timeOut">שעת יציאה:</label>
-        <input type="time" id="timeOut" name="timeOut" required>
-
-        <label for="name">שם השוכר:</label>
-        <input type="text" id="name" name="name" required>
-
-        <label for="id">תעודת זהות:</label>
-        <input type="text" id="id" name="id" required>
-
-        <label for="address">כתובת:</label>
-        <input type="text" id="address" name="address" required>
-
-        <label for="fuel">כמות דלק:</label>
-        <input type="text" id="fuel" name="fuel" required>
-
-        <label for="phone">טלפון:</label>
-        <input type="tel" id="phone" name="phone" required>
-
-        <!-- מסלול ביטוח -->
-        <label>בחר מסלול ביטוח:</label>
-        <select id="insurancePlan" name="insurancePlan" required>
-            <option value="planA">0 ₪ מסלול ביטוח חלקי א'</option>
-            <option value="planB">89 ₪ מסלול ביטוח חלקי ב'</option>
-            <option value="planC">189 ₪ מסלול ביטוח מלא עם השתתפות עצמית</option>
-        </select>
-
-        <!-- העלאת תמונות -->
-        <label for="carImages">תמונות רכב ביציאה:</label>
-        <input type="file" id="carImages" name="carImages" accept="image/*" multiple required>
-
-        <label for="licenseImage">תמונת רישיון נהיגה:</label>
-        <input type="file" id="licenseImage" name="licenseImage" accept="image/*" required>
-
-        <!-- חתימה דיגיטלית -->
-        <label>חתימה:</label>
-        <canvas id="signaturePad" class="signature-pad"></canvas>
-        <button type="button" onclick="clearSignature()">נקה חתימה</button>
-
-        <button type="submit">שלח</button>
-        <button type="button" onclick="generatePDF()">שמור ל-PDF</button>
+    <div class="container" id="agreement-container">
+        <!-- התבנית תיטען כאן -->
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     <script>
-        const signaturePad = document.getElementById('signaturePad');
-        const context = signaturePad.getContext('2d');
+        // טעינת ההסכם מ-GitHub
+        function loadAgreementTemplate() {
+            fetch('https://raw.githubusercontent.com/YOUR_REPOSITORY/YOUR_BRANCH/agreement-template.html')
+                .then(response => response.text())
+                .then(data => {
+                    // נכניס את תוכן ההסכם לקונטיינר
+                    document.getElementById('agreement-container').innerHTML = data;
 
-        // ניקוי החתימה
+                    // לאחר טעינת ההסכם, נמיר את השדות לשדות קלט דינמיים
+                    convertToForm();
+                })
+                .catch(error => {
+                    console.error('Error loading agreement template:', error);
+                    document.getElementById('agreement-container').innerHTML = '<p>שגיאה בטעינת ההסכם</p>';
+                });
+        }
+
+        // המרה לשדות קלט דינמיים
+        function convertToForm() {
+            // כאן נעבור על המקומות שדורשים המרה לשדות קלט, דוגמה:
+            const agreement = document.getElementById('agreement-container');
+            
+            // המרה לדוגמה של חלק מהשדות:
+            agreement.innerHTML = agreement.innerHTML.replace('תאריך__________________', '<input type="date" id="date" name="date" required>');
+            agreement.innerHTML = agreement.innerHTML.replace('סוג רכב:________________', '<input type="text" id="carType" name="carType" required>');
+            agreement.innerHTML = agreement.innerHTML.replace('קילומטר יציאה________________', '<input type="number" id="kmOut" name="kmOut" required>');
+            agreement.innerHTML = agreement.innerHTML.replace('קיל\' החזרה_________________', '<input type="number" id="kmIn" name="kmIn" disabled value="ימולא בהחזרת הרכב">');
+            agreement.innerHTML = agreement.innerHTML.replace('שעת יציאה:________', '<input type="time" id="timeOut" name="timeOut" required>');
+            agreement.innerHTML = agreement.innerHTML.replace('שם_____________________', '<input type="text" id="name" name="name" required>');
+            agreement.innerHTML = agreement.innerHTML.replace('ת.ז____________________', '<input type="text" id="id" name="id" required>');
+            agreement.innerHTML = agreement.innerHTML.replace('כתובת___________________________', '<input type="text" id="address" name="address" required>');
+            agreement.innerHTML = agreement.innerHTML.replace('כמות דלק:____________', '<input type="text" id="fuel" name="fuel" required>');
+            agreement.innerHTML = agreement.innerHTML.replace('טל\'________________', '<input type="tel" id="phone" name="phone" required>');
+
+            // המרה של מסלולי הביטוח
+            agreement.innerHTML = agreement.innerHTML.replace('❏ 0 ₪ מסלול ביטוח חלקי א\'', '<input type="radio" name="insurancePlan" value="planA" required> 0 ₪ מסלול ביטוח חלקי א\'');
+            agreement.innerHTML = agreement.innerHTML.replace('❏ 89 ₪ מסלול ביטוח חלקי ב\'', '<input type="radio" name="insurancePlan" value="planB" required> 89 ₪ מסלול ביטוח חלקי ב\'');
+            agreement.innerHTML = agreement.innerHTML.replace('❏ 189 ₪ מסלול ביטוח מלא עם השתתפות עצמית', '<input type="radio" name="insurancePlan" value="planC" required> 189 ₪ מסלול ביטוח מלא עם השתתפות עצמית');
+
+            // הוספת מקום להעלאת תמונות וחתימה
+            agreement.innerHTML += `
+                <label for="carImages">תמונות רכב ביציאה:</label>
+                <input type="file" id="carImages" name="carImages" accept="image/*" multiple required>
+                
+                <label for="licenseImage">תמונת רישיון נהיגה:</label>
+                <input type="file" id="licenseImage" name="licenseImage" accept="image/*" required>
+
+                <label>חתימה:</label>
+                <canvas id="signaturePad" class="signature-pad"></canvas>
+                <button type="button" onclick="clearSignature()">נקה חתימה</button>
+
+                <button type="button" onclick="generatePDF()">שמור ל-PDF</button>
+            `;
+        }
+
+        // פונקציה לניקוי חתימה
         function clearSignature() {
+            const signaturePad = document.getElementById('signaturePad');
+            const context = signaturePad.getContext('2d');
             context.clearRect(0, 0, signaturePad.width, signaturePad.height);
         }
 
-        // שמירה ל-PDF
+        // פונקציה לשמירת ההסכם ל-PDF
         function generatePDF() {
-            const element = document.getElementById('agreement');
+            const element = document.getElementById('agreement-container');
             html2pdf().from(element).save();
         }
 
-        // שליחת טופס (כאן ניתן להוסיף לוגיקה לשמירת הנתונים)
-        document.getElementById('rentalForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            alert('ההסכם נשלח בהצלחה!');
-        });
+        // טעינת התבנית בהפעלת הדף
+        loadAgreementTemplate();
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 </body>
 </html>
