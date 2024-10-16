@@ -53,7 +53,7 @@
     <script>
         // טעינת ההסכם מ-GitHub
         function loadAgreementTemplate() {
-            fetch('https://raw.githubusercontent.com/naorbarzion/kaplan/agreement-template.html')
+            fetch('https://raw.githubusercontent.com/naorbarzion/kaplan/main/agreement-template.html')
                 .then(response => response.text())
                 .then(data => {
                     // נכניס את תוכן ההסכם לקונטיינר
@@ -103,6 +103,9 @@
 
                 <button type="button" onclick="generatePDF()">שמור ל-PDF</button>
             `;
+
+            // כעת נוסיף את מאפייני החתימה אחרי שהקנבס נטען
+            setupSignaturePad();
         }
 
         // פונקציה לניקוי חתימה
@@ -118,48 +121,50 @@
             html2pdf().from(element).save();
         }
 
-        // ציור חתימה בקנבס
-        const signaturePad = document.getElementById('signaturePad');
-        const context = signaturePad.getContext('2d');
-        let drawing = false;
+        // הגדרת מאפייני החתימה אחרי טעינת הקנבס
+        function setupSignaturePad() {
+            const signaturePad = document.getElementById('signaturePad');
+            const context = signaturePad.getContext('2d');
+            let drawing = false;
 
-        // אירועי עכבר
-        signaturePad.addEventListener('mousedown', function(event) {
-            drawing = true;
-            context.beginPath();
-            context.moveTo(event.offsetX, event.offsetY);
-        });
+            // אירועי עכבר
+            signaturePad.addEventListener('mousedown', function(event) {
+                drawing = true;
+                context.beginPath();
+                context.moveTo(event.offsetX, event.offsetY);
+            });
 
-        signaturePad.addEventListener('mousemove', function(event) {
-            if (drawing) {
-                context.lineTo(event.offsetX, event.offsetY);
-                context.stroke();
-            }
-        });
+            signaturePad.addEventListener('mousemove', function(event) {
+                if (drawing) {
+                    context.lineTo(event.offsetX, event.offsetY);
+                    context.stroke();
+                }
+            });
 
-        signaturePad.addEventListener('mouseup', function() {
-            drawing = false;
-        });
+            signaturePad.addEventListener('mouseup', function() {
+                drawing = false;
+            });
 
-        // אירועי מגע למסכים ניידים
-        signaturePad.addEventListener('touchstart', function(event) {
-            const touch = event.touches[0];
-            drawing = true;
-            context.beginPath();
-            context.moveTo(touch.clientX - signaturePad.offsetLeft, touch.clientY - signaturePad.offsetTop);
-        });
-
-        signaturePad.addEventListener('touchmove', function(event) {
-            if (drawing) {
+            // אירועי מגע למסכים ניידים
+            signaturePad.addEventListener('touchstart', function(event) {
                 const touch = event.touches[0];
-                context.lineTo(touch.clientX - signaturePad.offsetLeft, touch.clientY - signaturePad.offsetTop);
-                context.stroke();
-            }
-        });
+                drawing = true;
+                context.beginPath();
+                context.moveTo(touch.clientX - signaturePad.offsetLeft, touch.clientY - signaturePad.offsetTop);
+            });
 
-        signaturePad.addEventListener('touchend', function() {
-            drawing = false;
-        });
+            signaturePad.addEventListener('touchmove', function(event) {
+                if (drawing) {
+                    const touch = event.touches[0];
+                    context.lineTo(touch.clientX - signaturePad.offsetLeft, touch.clientY - signaturePad.offsetTop);
+                    context.stroke();
+                }
+            });
+
+            signaturePad.addEventListener('touchend', function() {
+                drawing = false;
+            });
+        }
 
         // טעינת התבנית בהפעלת הדף
         loadAgreementTemplate();
