@@ -20,11 +20,14 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         input, select {
-            width: 100%;
+            width: 50%; /* קיצור השדות */
             padding: 8px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+        }
+        input::placeholder {
+            color: #999;
         }
         button {
             padding: 10px 15px;
@@ -56,7 +59,6 @@
             fetch('https://raw.githubusercontent.com/naorbarzion/kaplan/kaplan/agreement-template.html')
                 .then(response => response.text())
                 .then(data => {
-                    // נכניס את תוכן ההסכם לקונטיינר
                     document.getElementById('agreement-container').innerHTML = data;
 
                     // לאחר טעינת ההסכם, נמיר את השדות לשדות קלט דינמיים
@@ -72,17 +74,17 @@
         function convertToForm() {
             const agreement = document.getElementById('agreement-container');
             
-            // המרה של חלק מהשדות לשדות קלט דינמיים
-            agreement.innerHTML = agreement.innerHTML.replace('תאריך__________________', '<input type="date" id="date" name="date" required>');
-            agreement.innerHTML = agreement.innerHTML.replace('סוג רכב:________________', '<input type="text" id="carType" name="carType" required>');
-            agreement.innerHTML = agreement.innerHTML.replace('קילומטר יציאה________________', '<input type="number" id="kmOut" name="kmOut" required>');
-            agreement.innerHTML = agreement.innerHTML.replace('קיל\' החזרה_________________', '<input type="number" id="kmIn" name="kmIn" disabled value="ימולא בהחזרת הרכב">');
-            agreement.innerHTML = agreement.innerHTML.replace('שעת יציאה:________', '<input type="time" id="timeOut" name="timeOut" required>');
-            agreement.innerHTML = agreement.innerHTML.replace('שם_____________________', '<input type="text" id="name" name="name" required>');
-            agreement.innerHTML = agreement.innerHTML.replace('ת.ז____________________', '<input type="text" id="id" name="id" required>');
-            agreement.innerHTML = agreement.innerHTML.replace('כתובת___________________________', '<input type="text" id="address" name="address" required>');
-            agreement.innerHTML = agreement.innerHTML.replace('כמות דלק:____________', '<input type="text" id="fuel" name="fuel" required>');
-            agreement.innerHTML = agreement.innerHTML.replace('טל\'________________', '<input type="tel" id="phone" name="phone" required>');
+            // המרה של חלק מהשדות לשדות קלט דינמיים עם placeholders
+            agreement.innerHTML = agreement.innerHTML.replace('תאריך__________________', '<input type="date" id="date" name="date" required placeholder="תאריך">');
+            agreement.innerHTML = agreement.innerHTML.replace('סוג רכב:________________', '<input type="text" id="carType" name="carType" required placeholder="סוג רכב">');
+            agreement.innerHTML = agreement.innerHTML.replace('קילומטר יציאה________________', '<input type="number" id="kmOut" name="kmOut" required placeholder="קילומטר ביציאה">');
+            agreement.innerHTML = agreement.innerHTML.replace('קיל\' החזרה_________________', '<input type="number" id="kmIn" name="kmIn" disabled placeholder="ימולא בהחזרת הרכב">');
+            agreement.innerHTML = agreement.innerHTML.replace('שעת יציאה:________', '<input type="time" id="timeOut" name="timeOut" required placeholder="שעת יציאה">');
+            agreement.innerHTML = agreement.innerHTML.replace('שם_____________________', '<input type="text" id="name" name="name" required placeholder="שם">');
+            agreement.innerHTML = agreement.innerHTML.replace('ת.ז____________________', '<input type="text" id="id" name="id" required placeholder="תעודת זהות">');
+            agreement.innerHTML = agreement.innerHTML.replace('כתובת___________________________', '<input type="text" id="address" name="address" required placeholder="כתובת">');
+            agreement.innerHTML = agreement.innerHTML.replace('כמות דלק:____________', '<input type="text" id="fuel" name="fuel" required placeholder="כמות דלק">');
+            agreement.innerHTML = agreement.innerHTML.replace('טל\'________________', '<input type="tel" id="phone" name="phone" required placeholder="טלפון">');
 
             // המרה של מסלולי הביטוח
             agreement.innerHTML = agreement.innerHTML.replace('❏ 0 ₪ מסלול ביטוח חלקי א\'', '<input type="radio" name="insurancePlan" value="planA" required> 0 ₪ מסלול ביטוח חלקי א\'');
@@ -118,7 +120,12 @@
         // פונקציה לשמירת ההסכם ל-PDF
         function generatePDF() {
             const element = document.getElementById('agreement-container');
-            html2pdf().from(element).save();
+            html2pdf().from(element, {
+                margin:       [10, 10, 10, 10],
+                filename:     'agreement.pdf',
+                html2canvas:  { scale: 2, scrollX: 0, scrollY: 0, windowWidth: document.documentElement.offsetWidth },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).save();
         }
 
         // הגדרת מאפייני החתימה אחרי טעינת הקנבס
