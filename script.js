@@ -7,7 +7,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const agreementDetails = document.getElementById('agreementDetails');
     const contractContent = document.getElementById('contractContent');
 
-    // שלב א' - שליחת הטופס והמעבר לשלב ב'
+    // טעינת קובץ ההסכם מ-agreement-template.html
+    function loadAgreementTemplate() {
+        fetch('agreement-template.html')
+            .then(response => response.text())
+            .then(data => {
+                contractContent.innerHTML = data;
+            })
+            .catch(error => {
+                contractContent.innerHTML = '<p>שגיאה בטעינת ההסכם.</p>';
+                console.error('Error loading agreement template:', error);
+            });
+    }
+
+    // שליחת הטופס והמעבר לשלב ב'
     form.addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -47,6 +60,9 @@ document.addEventListener('DOMContentLoaded', function () {
         agreementHTML += `<p><strong>תמונת רישיון נהיגה:</strong></p><img src="${rentalData.licenseImage}" alt="רישיון נהיגה" style="max-width: 200px;"/>`;
 
         agreementDetails.innerHTML = agreementHTML;
+
+        // טעינת ההסכם מ-agreement-template.html
+        loadAgreementTemplate();
 
         // מעבר לשלב ב'
         step1.style.display = 'none';
