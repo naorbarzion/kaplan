@@ -1,80 +1,127 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>הסכם השכרת רכב</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .signature-pad {
+            border: 1px solid #000;
+            width: 100%;
+            height: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <!-- שלב א' - מילוי פרטי השוכר -->
-    <div class="container" id="step1">
-        <h1>טופס הסכם השכרת רכב</h1>
+    <div class="container">
+        <h1>הסכם השכרת רכב</h1>
         <form id="rentalForm">
-            <div class="field">
-                <label for="date">תאריך:</label>
-                <input type="date" id="date" name="date" required>
-            </div>
-            <div class="field">
-                <label for="carType">סוג רכב:</label>
-                <input type="text" id="carType" name="carType" required>
-            </div>
-            <div class="field">
-                <label for="kmOut">קילומטר ביציאה:</label>
-                <input type="number" id="kmOut" name="kmOut" required>
-            </div>
-            <div class="field">
-                <label for="timeOut">שעת יציאה:</label>
-                <input type="time" id="timeOut" name="timeOut" required>
-            </div>
-            <div class="field">
-                <label for="name">שם השוכר:</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div class="field">
-                <label for="id">תעודת זהות:</label>
-                <input type="text" id="id" name="id" required>
-            </div>
-            <div class="field">
-                <label for="address">כתובת:</label>
-                <input type="text" id="address" name="address" required>
-            </div>
-            <div class="field">
-                <label for="fuel">כמות דלק:</label>
-                <input type="text" id="fuel" name="fuel" required>
-            </div>
-            <div class="field">
-                <label for="phone">טלפון:</label>
-                <input type="tel" id="phone" name="phone" required>
-            </div>
-            <div class="field">
-                <label for="carImages">תמונות רכב ביציאה:</label>
-                <input type="file" id="carImages" name="carImages" accept="image/*" multiple required>
-            </div>
-            <div class="field">
-                <label for="licenseImage">תמונת רישיון נהיגה:</label>
-                <input type="file" id="licenseImage" name="licenseImage" accept="image/*" required>
-            </div>
-            <button type="submit">המשך לשלב ב'</button>
+            <label for="date">תאריך:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="carType">סוג רכב:</label>
+            <input type="text" id="carType" name="carType" required>
+
+            <label for="kmOut">קילומטר ביציאה:</label>
+            <input type="number" id="kmOut" name="kmOut" required>
+
+            <label for="kmIn">קילומטר בחזרה:</label>
+            <input type="number" id="kmIn" name="kmIn">
+
+            <label for="timeOut">שעת יציאה:</label>
+            <input type="time" id="timeOut" name="timeOut" required>
+
+            <label for="name">שם השוכר:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="id">תעודת זהות:</label>
+            <input type="text" id="id" name="id" required>
+
+            <label for="address">כתובת:</label>
+            <input type="text" id="address" name="address" required>
+
+            <label for="fuel">כמות דלק:</label>
+            <input type="text" id="fuel" name="fuel" required>
+
+            <label for="phone">טלפון:</label>
+            <input type="tel" id="phone" name="phone" required>
+
+            <label>בחר מסלול ביטוח:</label>
+            <select id="insurancePlan" name="insurancePlan" required>
+                <option value="planA">0 ₪ מסלול ביטוח חלקי א'</option>
+                <option value="planB">89 ₪ מסלול ביטוח חלקי ב'</option>
+                <option value="planC">189 ₪ מסלול ביטוח מלא עם השתתפות עצמית</option>
+            </select>
+
+            <label for="carImages">תמונות רכב ביציאה:</label>
+            <input type="file" id="carImages" name="carImages" accept="image/*" multiple required>
+
+            <label for="licenseImage">תמונת רישיון נהיגה:</label>
+            <input type="file" id="licenseImage" name="licenseImage" accept="image/*" required>
+
+            <label>חתימה:</label>
+            <canvas id="signaturePad" class="signature-pad"></canvas>
+            <button type="button" onclick="clearSignature()">נקה חתימה</button>
+
+            <button type="submit">שלח</button>
         </form>
     </div>
 
-    <!-- שלב ב' - הצגת פרטי ההסכם לחתימה -->
-    <div class="container" id="step2" style="display:none;">
-        <h1>הסכם השכרת רכב</h1>
-        <div id="agreementDetails"></div>
-        <div id="contractContent">
-            <!-- כאן נטען את תוכן ההסכם מ-agreement-template.html -->
-            <p>טוען את פרטי ההסכם...</p>
-        </div>
-        <div class="field">
-            <label>חתימת הלקוח:</label>
-            <canvas id="signaturePad" class="signature-pad"></canvas>
-            <button type="button" onclick="clearSignature()">נקה חתימה</button>
-        </div>
-        <button id="submitAgreement">אשר וחתום</button>
-    </div>
+    <script>
+        const signaturePad = document.getElementById('signaturePad');
+        const context = signaturePad.getContext('2d');
 
-    <script src="script.js"></script>
+        // פונקציה לניקוי החתימה
+        function clearSignature() {
+            context.clearRect(0, 0, signaturePad.width, signaturePad.height);
+        }
+
+        // תהליך שליחת הטופס
+        document.getElementById('rentalForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('ההסכם נשלח בהצלחה!');
+            // כאן אפשר להוסיף לוגיקה לשמירת הנתונים
+        });
+    </script>
 </body>
 </html>
