@@ -3,22 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>הסכם השכרת רכב</title>
+    <title>מילוי פרטי השוכר</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>הסכם השכרת רכב</h1>
+        <h1>טופס הסכם השכרת רכב - שלב א'</h1>
         <form id="rentalForm">
-            <!-- שדות טקסט, בחירה ותמונות -->
             <div class="field">
-                <label for="name">שם השוכר:</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            
-            <div class="field">
-                <label for="id">תעודת זהות:</label>
-                <input type="text" id="id" name="id" required>
+                <label for="date">תאריך:</label>
+                <input type="date" id="date" name="date" required>
             </div>
 
             <div class="field">
@@ -32,21 +26,37 @@
             </div>
 
             <div class="field">
-                <label for="kmReturn">קילומטר החזרה:</label>
-                <input type="number" id="kmReturn" name="kmReturn" required>
+                <label for="timeOut">שעת יציאה:</label>
+                <input type="time" id="timeOut" name="timeOut" required>
             </div>
 
             <div class="field">
-                <label for="insurancePlan">בחירת מסלול ביטוח:</label>
-                <select id="insurancePlan" name="insurancePlan" required>
-                    <option value="partialA">מסלול ביטוח חלקי א'</option>
-                    <option value="partialB">מסלול ביטוח חלקי ב'</option>
-                    <option value="full">מסלול ביטוח מלא</option>
-                </select>
+                <label for="name">שם השוכר:</label>
+                <input type="text" id="name" name="name" required>
             </div>
 
             <div class="field">
-                <label for="carImages">תמונות רכב:</label>
+                <label for="id">תעודת זהות:</label>
+                <input type="text" id="id" name="id" required>
+            </div>
+
+            <div class="field">
+                <label for="address">כתובת:</label>
+                <input type="text" id="address" name="address" required>
+            </div>
+
+            <div class="field">
+                <label for="fuel">כמות דלק:</label>
+                <input type="text" id="fuel" name="fuel" required>
+            </div>
+
+            <div class="field">
+                <label for="phone">טלפון:</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+
+            <div class="field">
+                <label for="carImages">תמונות רכב ביציאה:</label>
                 <input type="file" id="carImages" name="carImages" accept="image/*" multiple required>
             </div>
 
@@ -55,20 +65,8 @@
                 <input type="file" id="licenseImage" name="licenseImage" accept="image/*" required>
             </div>
 
-            <div class="field">
-                <label>חתימת הלקוח:</label>
-                <canvas id="signaturePad" class="signature-pad"></canvas>
-                <button type="button" onclick="clearSignature()">נקה חתימה</button>
-            </div>
-
-            <button type="submit">הצג הסכם</button>
+            <button type="submit">המשך לשלב ב'</button>
         </form>
-
-        <!-- כאן נציג את ההסכם המלא -->
-        <div id="agreementPreview" style="display: none;">
-            <h2>הסכם מלא</h2>
-            <div id="agreementContent"></div>
-        </div>
     </div>
 
     <script src="script.js"></script>
