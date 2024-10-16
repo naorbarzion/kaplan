@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הסכם השכרת רכב - שלב ב'</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>הסכם השכרת רכב</h1>
+        <div id="agreementDetails"></div>
+
+        <div class="field">
+            <label>חתימת הלקוח:</label>
+            <canvas id="signaturePad" class="signature-pad"></canvas>
+            <button type="button" onclick="clearSignature()">נקה חתימה</button>
+        </div>
+
+        <button id="submitAgreement">אשר וחתום</button>
+    </div>
+
+    <script src="agreement.js"></script>
+</body>
+</html>
