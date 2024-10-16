@@ -9,8 +9,8 @@
             font-family: Arial, sans-serif;
             direction: rtl;
             text-align: right;
-            margin: 0;
-            padding: 20px;
+            margin: 20px;
+            padding: 0;
             background-color: #f9f9f9;
         }
         .container {
@@ -20,7 +20,7 @@
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        input, select, textarea {
+        input, select {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -31,12 +31,6 @@
             font-weight: bold;
             margin-bottom: 5px;
             display: block;
-        }
-        .signature-pad {
-            border: 1px solid black;
-            width: 100%;
-            height: 200px;
-            margin-bottom: 10px;
         }
         button {
             padding: 10px 15px;
@@ -49,86 +43,93 @@
         button:hover {
             background-color: #45a049;
         }
+        .signature-pad {
+            border: 1px solid black;
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" id="agreement">
         <h1>הסכם השכרת רכב</h1>
-        
-        <!-- טופס למילוי פרטים -->
-        <form id="rentalForm">
-            <!-- שדות פרטי השוכר -->
-            <label for="date">תאריך:</label>
-            <input type="date" id="date" name="date" required>
 
-            <label for="carType">סוג רכב:</label>
-            <input type="text" id="carType" name="carType" required>
+        <!-- שדות למילוי -->
+        <label for="date">תאריך:</label>
+        <input type="date" id="date" name="date" required>
 
-            <label for="kmOut">קילומטר ביציאה:</label>
-            <input type="number" id="kmOut" name="kmOut" required>
+        <label for="carType">סוג רכב:</label>
+        <input type="text" id="carType" name="carType" required>
 
-            <label for="kmIn">קילומטר בחזרה:</label>
-            <input type="number" id="kmIn" name="kmIn" disabled value="ימולא בזמן החזרת הרכב">
+        <label for="kmOut">קילומטר ביציאה:</label>
+        <input type="number" id="kmOut" name="kmOut" required>
 
-            <label for="timeOut">שעת יציאה:</label>
-            <input type="time" id="timeOut" name="timeOut" required>
+        <label for="kmIn">קילומטר בחזרה:</label>
+        <input type="number" id="kmIn" name="kmIn" disabled value="ימולא בזמן החזרת הרכב">
 
-            <label for="name">שם השוכר:</label>
-            <input type="text" id="name" name="name" required>
+        <label for="timeOut">שעת יציאה:</label>
+        <input type="time" id="timeOut" name="timeOut" required>
 
-            <label for="id">תעודת זהות:</label>
-            <input type="text" id="id" name="id" required>
+        <label for="name">שם השוכר:</label>
+        <input type="text" id="name" name="name" required>
 
-            <label for="address">כתובת:</label>
-            <input type="text" id="address" name="address" required>
+        <label for="id">תעודת זהות:</label>
+        <input type="text" id="id" name="id" required>
 
-            <label for="fuel">כמות דלק:</label>
-            <input type="text" id="fuel" name="fuel" required>
+        <label for="address">כתובת:</label>
+        <input type="text" id="address" name="address" required>
 
-            <label for="phone">טלפון:</label>
-            <input type="tel" id="phone" name="phone" required>
+        <label for="fuel">כמות דלק:</label>
+        <input type="text" id="fuel" name="fuel" required>
 
-            <!-- שדות ביטוח -->
-            <label>בחר מסלול ביטוח:</label>
-            <select id="insurancePlan" name="insurancePlan" required>
-                <option value="planA">0 ₪ מסלול ביטוח חלקי א'</option>
-                <option value="planB">89 ₪ מסלול ביטוח חלקי ב'</option>
-                <option value="planC">189 ₪ מסלול ביטוח מלא עם השתתפות עצמית</option>
-            </select>
+        <label for="phone">טלפון:</label>
+        <input type="tel" id="phone" name="phone" required>
 
-            <!-- העלאת תמונות -->
-            <label for="carImages">תמונות רכב ביציאה:</label>
-            <input type="file" id="carImages" name="carImages" accept="image/*" multiple required>
+        <!-- מסלול ביטוח -->
+        <label>בחר מסלול ביטוח:</label>
+        <select id="insurancePlan" name="insurancePlan" required>
+            <option value="planA">0 ₪ מסלול ביטוח חלקי א'</option>
+            <option value="planB">89 ₪ מסלול ביטוח חלקי ב'</option>
+            <option value="planC">189 ₪ מסלול ביטוח מלא עם השתתפות עצמית</option>
+        </select>
 
-            <label for="licenseImage">תמונת רישיון נהיגה:</label>
-            <input type="file" id="licenseImage" name="licenseImage" accept="image/*" required>
+        <!-- העלאת תמונות -->
+        <label for="carImages">תמונות רכב ביציאה:</label>
+        <input type="file" id="carImages" name="carImages" accept="image/*" multiple required>
 
-            <!-- חתימה דיגיטלית -->
-            <label>חתימה:</label>
-            <canvas id="signaturePad" class="signature-pad"></canvas>
-            <button type="button" onclick="clearSignature()">נקה חתימה</button>
+        <label for="licenseImage">תמונת רישיון נהיגה:</label>
+        <input type="file" id="licenseImage" name="licenseImage" accept="image/*" required>
 
-            <!-- שליחת הטופס -->
-            <button type="submit">שלח</button>
-        </form>
+        <!-- חתימה דיגיטלית -->
+        <label>חתימה:</label>
+        <canvas id="signaturePad" class="signature-pad"></canvas>
+        <button type="button" onclick="clearSignature()">נקה חתימה</button>
+
+        <button type="submit">שלח</button>
+        <button type="button" onclick="generatePDF()">שמור ל-PDF</button>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     <script>
         const signaturePad = document.getElementById('signaturePad');
         const context = signaturePad.getContext('2d');
 
-        // פונקציה לניקוי החתימה
+        // ניקוי החתימה
         function clearSignature() {
             context.clearRect(0, 0, signaturePad.width, signaturePad.height);
         }
 
-        // תהליך שליחת הטופס
+        // שמירה ל-PDF
+        function generatePDF() {
+            const element = document.getElementById('agreement');
+            html2pdf().from(element).save();
+        }
+
+        // שליחת טופס (כאן ניתן להוסיף לוגיקה לשמירת הנתונים)
         document.getElementById('rentalForm').addEventListener('submit', function(event) {
             event.preventDefault();
-
-            // כאן תתווסף לוגיקה לשמירת הנתונים
-
             alert('ההסכם נשלח בהצלחה!');
         });
     </script>
