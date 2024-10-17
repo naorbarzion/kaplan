@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הסכם השכרת רכב</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            font-size: 14px;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+        .form-row { 
+            display: flex; 
+            flex-wrap: wrap;
+            justify-content: space-between; 
+            margin-bottom: 10px; 
+        }
+        .form-group { 
+            flex: 1 1 200px; 
+            margin-right: 10px; 
+            margin-bottom: 10px;
+        }
+        .form-group:last-child { 
+            margin-right: 0; 
+        }
+        .form-group input, .form-group select { 
+            width: 100%; 
+            padding: 5px; 
+            box-sizing: border-box;
+        }
+        .short-input {
+            width: 150px !important;
+        }
+        #signature-pad { 
+            border: 1px solid #000; 
+            width: 100%; 
+            max-width: 300px;
+            height: 150px; 
+        }
+        .image-preview { 
+            max-width: 200px; 
+            max-height: 200px; 
+            margin-top: 5px;
+        }
+        #terms { 
+            margin-bottom: 20px; 
+        }
+        #terms p { 
+            margin-bottom: 10px; 
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        button {
+            margin-right: 10px;
+            margin-bottom: 10px;
+            padding: 5px 10px;
+        }
+        .car-images {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .car-image {
+            margin: 5px;
+            max-width: 200px;
+            max-height: 200px;
+        }
+        @media (max-width: 600px) {
+            .form-group {
+                flex: 1 1 100%;
+                margin-right: 0;
+            }
+            .short-input {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="content">
+        <h1>הסכם השכרת רכב</h1>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <input type="datetime-local" id="dateTime" name="dateTime" placeholder="תאריך ושעה">
+            </div>
+            <div class="form-group">
+                <input type="text" id="carType" name="carType" placeholder="סוג רכב">
+            </div>
+            <div class="form-group">
+                <input type="text" id="startMileage" name="startMileage" placeholder="ק"מ יציאה">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <input type="text" id="name" name="name" placeholder="שם">
+            </div>
+            <div class="form-group">
+                <input type="text" id="id" name="id" placeholder="ת.ז">
+            </div>
+            <div class="form-group">
+                <input type="text" id="address" name="address" placeholder="כתובת">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <input type="text" id="fuelAmount" name="fuelAmount" placeholder="כמות דלק">
+            </div>
+            <div class="form-group">
+                <input type="tel" id="phone" name="phone" placeholder="טל'">
+            </div>
+            <div class="form-group">
+                <input type="text" id="endMileage" name="endMileage" placeholder="ק"מ חזרה" class="short-input" disabled>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="licenseImage">תמונת רישיון נהיגה:</label>
+                <input type="file" id="licenseImage" name="licenseImage" accept="image/*" capture="environment" onchange="previewImage(event, 'licensePreview')">
+                <button onclick="openCamera('licenseImage')">צלם רישיון</button>
+                <img id="licensePreview" class="image-preview" src="#" alt="תצוגה מקדימה של רישיון נהיגה" style="display: none;">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="carImages">תמונות הרכב:</label>
+                <input type="file" id="carImages" name="carImages" accept="image/*" capture="environment" multiple onchange="previewMultipleImages(event)">
+                <button onclick="openCamera('carImages')">צלם רכב</button>
+                <div id="carImagesPreview" class="car-images"></div>
+            </div>
+        </div>
+        
+        <h2>תנאי החוזה</h2>
+        <div id="terms">
+<p>1. היה והשוכר מעונין בנהג נוסף מלבדו ישלם תוספת של 20 ₪ ליום ועליו לדאוג (לוודא) שהמשכירה תציין את שמו ואת פרטיו של הנהג הנוסף בחוזה.
+<p>2. מורשה לנהוג ברכב נהג מגיל המחוייב בחוק.
+<p>3. השוכר מצהיר בזאת כי בדק את הרכב על כך צדדיו לרבות מרכב תחתון, טרם נסיעתו ומצא אותו מתאים לצרכיו בזאת, והשוכר מוותר על כל טענה של אי התאמה ו/או פגם.
+<p>4. השוכר מתחייב לנהוג בזהירות מרבית ובהתאם לחוקי התנועה החלים בישראל.
+<p>5. שים לב! במקרה בו ייגרם נזק לרכב ו/או לרכב צד שלישי ו/או לרכוש צד שלישי, כתוצאה מתאונה ו/או כתוצאה מכל מקרה אחר, יישא השוכר בעלות התיקון נזק בפועל כולל ימי השבתה עד ל3 ימי עסקים (חישוב עלות הנזק תיעשה על פי דעת המשכיר או מי מטעמו ללא עוררין כלל).
+<p>6. על הנהג להשתמש ברכב אך ורק לענייניו הפרטיים.
+<p>7. היה והשוכר הינו נהג חדש/צעיר, (נהג מתחת לגיל 21 או נהג בן 21 עד 24 בעל וותק של פחות משנתיים רישיון נהיגה,) יישא השוכר בעלות התיקון נזק בפועל, וזאת עד לסך של 15,000 ₪ + מע"מ כחוק באפשרותו להקטין תשלום התיקון נזק בפועל עד לסך 4000 ₪ בתוספת של 49 ₪ כולל מע"מ ליום השכרה.
+<p>8. במידה והנהג חדש/צעיר לא מעוניין לשלם עלות התיקון נזק בפועל, עד לסך של 15,000 ₪ + מע"מ באפשרותו לרכוש כיסוי ביטוחים עם השתתפות עצמית (שתחושב בהתאם לקבוצת המחיר אליה משתייך הרכב) על ידי תוספת תשלום בסך של 119 ₪ כולל מע"מ ליום השכרה.
+<p>9. בגין נסיעה בכבישי אגרה, השוכר יחויב על פי מחירון כבישי האגרה כ"נוסע מזדמן" בצירוף עמלת דמי טיפול (אשר תשולם לשוכרת) בסך של 70 ₪ במידה והשוכר אינו מעוניין לשלם דמי טיפול לשוכרת ולהשתמש במנוי שלה, השוכר רשאי לעשות מנוי עצמאי משלו.
+<p>10. במקרה של החזרת רכב לא מתודלק - יישא השוכר בעמלת תדלוק בסך 50 ₪ ובמקרה של דוחות שונים (קנסות) – עמלת דמי טיפול בסך 99 ₪.
+<p>11. במקרה של נזק/תאונה/גניבה לרכב או צד ג' (גם במקרה שלא באשמת השוכר), תשולם השתתפות עצמית בהתאם לקבוצת המחיר אליה משתייך הרכב (כפי שיאמר המשכיר) כמוזכר לעיל - נזקים למרכב תחתון/צמיגים/פנסים ופנים הרכב אינם מכוסים בשום כיסוי במקרה ונזק שכזה, יחויב השוכר את הנזק במלואו.
+<p>12. אני הח"מ , בעל כרטיס האשראי המצוין לעייל מוסר בזאת את הרשאתי למשכירה ו/או למי מטעמה לעשות שימוש בכרטיס האשראי ו/או בפרטיו המפורטים לעיל ו/או בשורי האשראי החתומים כאמצעי תשלום בגין כלל התחייבויות השוכר בחוזה זה.
+<p>13. אני הח"מ, מאשר כי קראתי את חוזה השכירות ובכך אני מאשר ומסכים לתוכן האמור בו, לרבות התחייבויותיי לתשלומים בגין דמי השכירות תקופת השכירות, תשלום נזקים בגין תאונה, דמי השתתפות עצמית עד ל15,000+מע"מ, דמי חריגה ממכסת הק"מ, העמלות השונות ושאר התנאים המסחריים.
+<p>14. השוכר מתחייב בזאת כי לא ינהג ברכב בשבתות ובחגי ישראל וכי יישא במלואו בכל נזק שנגרם או אובדן או הפסד אשר ייגרם למשכירה כתוצאה מנהיגה במועדים כאמור במלואם וזאת ללא כל השתתפות בכיסוי הנזק כאמור ע"י החברה. מעשה זה הינו הפרה יסודית של הסכם זה.
+<p>15. יובהר ומוסכם כי במקרה בו השוכר ו/או הנהג בתקופת שלילה ו/או פסילה של רישיון הנהיגה, אין כיסוי ביטוחי וכל פגיעה ו/או נזק שיגרם לרכב ו/או לצד שלישי, במישרין ו/או בעקיפין יחולו על השוכר ו/או באחריותו הבלעדית, במקרה כזה המשכירה לא תישא באחריות כלל.
+<p>16. במקרה של השכרה מתמשכת ו/או במקרה בו הרכב יוחלף מסיבה כלשהי ו/או בכל מקרה של חתימה על חוזה חדש ו/או מעודכן, ייחשב החוזה הנוסף כחלק בלתי נפרד מהחוזה החתום הראשון, ושוכר הרכב ו/או בעל כרטיס האשראי יהיו מנועים מלטעון כל טענה בעניין היעדר חתימותיהם על ההסכם הנוסף.
+<p>17. השוכר מתחייב להשיב למשכירה את הרכב בתום ההשכרה , ו/או מיד עם קבלת הודעה מתאימה לסניף ההשכרה, כפי שנמסר לידיו ,כאשר הרכב במצב טוב ותקין , ריק מכל חפץ השייך לשוכר ו/או מי מטעמו ומתודלק מיכל מלא , במקרה והושכר השיב את הרכב לא מתודלק , יישא השוכר בעמלת תדלוק למשכירה על סך 50 ₪.
+<p>18. במידה ויימצאו חפצים ברכב , הם יישמרו במשרדי המשכירה ל- 24 שעות מרגע חזרת הרכב לאחר 24 שעות , לא יהיה לשוכר ו/או מי מטעמו כל טענה כלפי המשכירה לגורל החפצים.
+<p>26. יובהר כי במקרה של רכישת כיסוי ביטוחי נזקים על ידי השוכר (אף במקרה של רכישת כיסוי ביטוחי לביטול ההשתתפות העצמית) כיסוי ביטוחי זה אינו חל על נזקי צמיגים / גלגלים/פנסים/מרכב תחתון/שמשות. אלו ישולמו במלואם על ידי השוכר ו/או מי מטעמו.
+<p>27. רכב חלופי - במקרה בו ניתן רכב על ידי המוסך המטפל ו/או חברת הביטוח, הינו למספר ימים מוגבל ובהצגת אסמכתא למשכירה. בכל שתוארך תקופת השכירות בלא הצגת אסמכתא מתאימה, הרי שהשוכר יישא בכל התשלומים המצוינים בחוזה השכירות, לרבות דמי שכירות בגין ימים נוספים. אילו לשוכר לא תהא כל טענה ו/או דרישה.
+<p>28. בשכירות עד 4 ימים יהיה הגבלה של עד 250 ק"מ ליום. מעל 4 ימים ועד שבוע מוגבל ל-1000 ק"מ לכל שבוע. לכל קילומטר חריגה ישלם השוכר 1 שקל לקילומטר.
+<p>29. נסיעה תוך התעלמות מנורות אזהרה תחייב את הנהג במלוא תשלום הנזק שייגרם.
+<p>30. חל איסור לצאת עם הרכב את גבולות המדינה או להיכנס לשטחי הרשות הפלסטינית.
+<p>31. בחלק מרכבי החברה מותקנות מערכות איתוראן לאיתור כלי הרכב (GPS). אני מצהיר כי הבנתי את כל סעיפי החוזה והוראותיהם.
+<p>32. על השוכר האחריות המלאה ויישא בתשלום מלא הנזקים שיגרמו בנהיגה בדרך לא סלולה ו/או נהיגה רשלנית ו/או פראית ו/או בניגוד לחוקי התעבורה, לרבות נזקים תוצאתיים כגון ימי השבתה כתוצאה מהחרמת הרכב על ידי המשטרה ו/או העמדתו במוסך. דמי טיפול בנזקים על סך 500 ₪. השוכר מצהיר כי נמסר לו שאין לנזקים אלו שום כיסוי ביטוחי, וכן נמסר לו כי במקרה של פגיעה בשני מוקדים לרבות נזקי צד ג' תחול עליו השתתפות עצמית על כל מוקד בנפרד. השוכר מתחייב לשלם דמי השתתפות עצמית בכל מקרה שייגרם נזק, בין שבאחריותו ובין שאינו באחריותו, לרבות נזקי אסון טבע, שריפה, גניבה טוטאלוס עד לסך גובה ההשתתפות העצמית. אני מצהיר כי הבנתי את כל סעיפי החוזה והוראותיהם. בחתימתי זו אני מתחייב לקיימם במלואם ולשאת בכל תשלום הנובע מהם, ככל שיידרש ממני על ידי המשכירה בהתאם לחוזה זה.
+        </div>
+        
+        <div class="insurance-options">
+            <h3>מסלולי ביטוח:</h3>
+            <p>במידה והשוכר הינו נהג חדש ו/או מתחת לגיל 21 קיימים בפניו מספר מסלולי ביטוח. היה ובחר השוכר במסלול ביטוח חלקי, הרי שהוא מצהיר בזאת כי הוא נוטל על עצמו את</p>
+            <div>
+                <input type="radio" id="insurance1" name="insurance" value="0">
+                <label for="insurance1">0 ₪ מסלול ביטוח חלקי א' - במקרה נזק ישא השוכר בתשלום גובה הנזק עד לסך מרבי של 15,000ש''ח לפני מע''מ.</label>
+            </div>
+            <div>
+                <input type="radio" id="insurance2" name="insurance" value="89">
+                <label for="insurance2">89 ₪ מסלול ביטוח חלקי ב' -במקרה נזק ישא השוכר בתשלום גובה הנזק עד לסך מרבי של 4000 ש''ח לפני מע''מ.</label>
+            </div>
+            <div>
+                <input type="radio" id="insurance3" name="insurance" value="189">
+                <label for="insurance3">189 ₪ מסלול ביטוח מלא עם השתתפות עצמית - במקרה נזק ישא השוכר בהשתתפות עצמית כפי דרישת החוק עד 2000 ש''ח.</label>
+            </div>
+        </div>
+        
+        <h3>חתימת לקוח:</h3>
+        <canvas id="signature-pad"></canvas>
+    </div>
+
+    <div class="button-container">
+        <button id="clear-signature">נקה חתימה</button>
+        <button id="generatePDF">צור PDF</button>
+        <button onclick="window.print()">הדפס (Ctrl+P)</button>
+    </div>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+        
+        function generatePDF() {
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const content = document.getElementById('content');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const margins = {
+                top: 10,
+                bottom: 10,
+                left: 10,
+                right: 10
+            };
+
+            html2canvas(content, { 
+                scale: 2,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 0.7);
+                const imgWidth = pdfWidth - (margins.left + margins.right);
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                
+                let heightLeft = imgHeight;
+                let position = margins.top;
+
+                pdf.addImage(imgData, 'JPEG', margins.left, position, imgWidth, imgHeight);
+                heightLeft -= (pdfHeight - margins.top - margins.bottom);
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', margins.left, position, imgWidth, imgHeight);
+                    heightLeft -= (pdfHeight - margins.top - margins.bottom);
+                }
+
+                pdf.save('car_rental_agreement.pdf');
+            });
+        }
+
+        const canvas = document.getElementById('signature-pad');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        canvas.addEventListener('touchstart', handleTouch);
+        canvas.addEventListener('touchmove', handleTouch);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touches = e.changedTouches;
+            const touch = touches[0];
+            const mouseEvent = new MouseEvent("mousemove", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        document.getElementById('clear-signature').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        function previewImage(event, previewId) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById(previewId);
+                output.src = reader.result;
+                output.style.display = 'block';
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function previewMultipleImages(event) {
+            const output = document.getElementById('carImagesPreview');
+            output.innerHTML = '';
+            for (let i = 0; i < event.target.files.length; i++) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('image-preview', 'car-image');
+                    output.appendChild(img);
+                }
+                reader.readAsDataURL(event.target.files[i]);
+            }
+        }
+
+        function openCamera(inputId) {
+            document.getElementById(inputId).click();
+        }
+
+        document.getElementById('generatePDF').addEventListener('click', generatePDF);
+
+        document.getElementById('endMileage').disabled = true;
+    </script>
+</body>
+</html>
