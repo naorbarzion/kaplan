@@ -137,6 +137,23 @@
                 margin-bottom: 10px;
             }
         }
+
+        /* שיפור המראה של המסך כולו */
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .container {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -227,21 +244,25 @@
         </div>
 
         <div class="insurance-options">
-    <h3>מסלולי ביטוח:</h3>
-    <p>במידה והשוכר הינו נהג חדש ו/או מתחת לגיל 21 קיימים בפניו מספר מסלולי ביטוח. היה ובחר השוכר במסלול ביטוח חלקי, הרי שהוא מצהיר בזאת כי הוא נוטל על עצמו את האחריות.</p>
-    <div>
-        <input type="radio" id="insurance1" name="insurance" value="0">
-        <label for="insurance1">0 ₪ מסלול ביטוח חלקי א' - במקרה נזק ישא השוכר בתשלום גובה הנזק עד לסך מרבי של 15,000 ש"ח לפני מע"מ.</label>
+            <h3>מסלולי ביטוח:</h3>
+            <p>במידה והשוכר הינו נהג חדש ו/או מתחת לגיל 21 קיימים בפניו מספר מסלולי ביטוח. היה ובחר השוכר במסלול ביטוח חלקי, הרי שהוא מצהיר בזאת כי הוא נוטל על עצמו את האחריות.</p>
+            <div>
+                <input type="radio" id="insurance1" name="insurance" value="0">
+                <label for="insurance1">0 ₪ מסלול ביטוח חלקי א' - במקרה נזק ישא השוכר בתשלום גובה הנזק עד לסך מרבי של 15,000 ש"ח לפני מע"מ.</label>
+            </div>
+            <div>
+                <input type="radio" id="insurance2" name="insurance" value="89">
+                <label for="insurance2">89 ₪ מסלול ביטוח חלקי ב' - במקרה נזק ישא השוכר בתשלום גובה הנזק עד לסך מרבי של 4000 ש"ח לפני מע"מ.</label>
+            </div>
+            <div>
+                <input type="radio" id="insurance3" name="insurance" value="189">
+                <label for="insurance3">189 ₪ מסלול ביטוח מלא עם השתתפות עצמית - במקרה נזק ישא השוכר בהשתתפות עצמית כפי דרישת החוק עד 2000 ש"ח.</label>
+            </div>
+        </div>
+
+        <h3>חתימת לקוח:</h3>
+        <canvas id="signature-pad"></canvas>
     </div>
-    <div>
-        <input type="radio" id="insurance2" name="insurance" value="89">
-        <label for="insurance2">89 ₪ מסלול ביטוח חלקי ב' - במקרה נזק ישא השוכר בתשלום גובה הנזק עד לסך מרבי של 4000 ש"ח לפני מע"מ.</label>
-    </div>
-    <div>
-        <input type="radio" id="insurance3" name="insurance" value="189">
-        <label for="insurance3">189 ₪ מסלול ביטוח מלא עם השתתפות עצמית - במקרה נזק ישא השוכר בהשתתפות עצמית כפי דרישת החוק עד 2000 ש"ח.</label>
-    </div>
-</div>
 
     <div class="button-container">
         <button id="clear-signature">נקה חתימה</button>
@@ -298,6 +319,7 @@
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
         canvas.addEventListener('mouseout', stopDrawing);
+
         canvas.addEventListener('touchstart', handleTouch);
         canvas.addEventListener('touchmove', handleTouch);
         canvas.addEventListener('touchend', stopDrawing);
