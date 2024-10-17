@@ -4,123 +4,201 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>הסכם השכרת רכב</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap');
+        /* עיצוב גוף הדף */
         body {
-            font-family: 'Heebo', sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-        }
-        #content {
-            max-width: 100%;
             padding: 20px;
-            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #f4f4f9;
+            color: #333;
         }
-        h1 {
-            font-size: 24px;
+
+        /* מיכל ראשי */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* כותרות */
+        h1, h2, h3 {
+            color: #333;
             margin-bottom: 20px;
+            text-align: center;
         }
+
+        /* שורות של טופס */
         .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
             margin-bottom: 15px;
         }
+
         .form-group {
-            margin-bottom: 10px;
+            flex: 1 1 200px;
+            margin-right: 10px;
+            margin-bottom: 15px;
         }
-        input[type="text"], input[type="number"], input[type="tel"] {
+
+        .form-group:last-child {
+            margin-right: 0;
+        }
+
+        .form-group input, .form-group select {
             width: 100%;
             padding: 10px;
+            box-sizing: border-box;
             border: 1px solid #ccc;
             border-radius: 4px;
-            font-size: 16px;
         }
+
+        /* קלט קצר */
+        .short-input {
+            width: 150px !important;
+        }
+
+        /* חתימה */
+        #signature-pad {
+            border: 1px solid #000;
+            width: 100%;
+            max-width: 300px;
+            height: 150px;
+            border-radius: 8px;
+        }
+
+        /* תצוגת מקדימה לתמונות */
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        /* תנאי החוזה */
+        #terms {
+            margin-bottom: 30px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
         button {
+            padding: 10px 20px;
+            margin: 0 10px;
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px 15px;
             border-radius: 4px;
-            font-size: 16px;
             cursor: pointer;
         }
-        #terms {
-            margin-top: 20px;
-            background-color: white;
-            padding: 15px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        button:hover {
+            background-color: #0056b3;
         }
-        .insurance-options {
-            margin-top: 20px;
-        }
-        .insurance-options div {
-            background-color: #e9ecef;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-        }
-        #signatureCanvas {
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .button-container {
+
+        .car-images {
             display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
+            flex-wrap: wrap;
         }
-        .button-container button {
-            flex: 1;
-            margin: 0 5px;
+
+        .car-image {
+            margin: 5px;
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+        }
+
+        /* התאמות מובייל */
+        @media (max-width: 600px) {
+            .form-group {
+                flex: 1 1 100%;
+                margin-right: 0;
+            }
+
+            .short-input {
+                width: 100% !important;
+            }
+
+            button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="content" class="container">
+    <div class="container" id="content">
         <h1>הסכם השכרת רכב</h1>
 
-        <form id="rentalForm">
-            <div class="form-row">
-                <div class="form-group">
-                    <input type="text" placeholder="שם מלא" required>
-                </div>
-                <div class="form-group">
-                    <input type="tel" placeholder="מספר טלפון" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" placeholder="מספר רישיון נהיגה" required>
-                </div>
+        <div class="form-row">
+            <div class="form-group">
+                <input type="datetime-local" id="dateTime" name="dateTime" placeholder="תאריך ושעה">
             </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <input type="text" placeholder="סוג רכב" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" placeholder="מספר רכב" required>
-                </div>
-                <div class="form-group">
-                    <input type="number" placeholder="מספר ימי השכרה" required>
-                </div>
+            <div class="form-group">
+                <input type="text" id="carType" name="carType" placeholder="סוג רכב">
             </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    תמונת רישיון נהיגה:
-                    <button type="button" id="uploadLicense">העלה תמונה</button>
-                    <div id="licensePreview" class="image-preview"></div>
-                </div>
+            <div class="form-group">
+                <input type="text" id="startMileage" name="startMileage" placeholder="ק"מ יציאה">
             </div>
+        </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    תמונות הרכב:
-                    <button type="button" id="uploadCarPhotos">העלה תמונות</button>
-                    <div id="carImagesPreview" class="car-images"></div>
-                </div>
+        <div class="form-row">
+            <div class="form-group">
+                <input type="text" id="name" name="name" placeholder="שם">
             </div>
+            <div class="form-group">
+                <input type="text" id="id" name="id" placeholder="ת.ז">
+            </div>
+            <div class="form-group">
+                <input type="text" id="address" name="address" placeholder="כתובת">
+            </div>
+        </div>
 
-            <div id="terms">
-                <h2>תנאי החוזה</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <input type="text" id="fuelAmount" name="fuelAmount" placeholder="כמות דלק">
+            </div>
+            <div class="form-group">
+                <input type="tel" id="phone" name="phone" placeholder="טל'">
+            </div>
+            <div class="form-group">
+                <input type="text" id="endMileage" name="endMileage" placeholder="ק"מ חזרה" class="short-input" disabled>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="licenseImage">תמונת רישיון נהיגה:</label>
+                <input type="file" id="licenseImage" name="licenseImage" accept="image/*" capture="environment" onchange="previewImage(event, 'licensePreview')">
+                <button onclick="openCamera('licenseImage')">צלם רישיון</button>
+                <img id="licensePreview" class="image-preview" src="#" alt="תצוגה מקדימה של רישיון נהיגה" style="display: none;">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="carImages">תמונות הרכב:</label>
+                <input type="file" id="carImages" name="carImages" accept="image/*" capture="environment" multiple onchange="previewMultipleImages(event)">
+                <button onclick="openCamera('carImages')">צלם רכב</button>
+                <div id="carImagesPreview" class="car-images"></div>
+            </div>
+        </div>
+
+        <h2>תנאי החוזה</h2>
+        <div id="terms">
 <p>1. היה והשוכר מעונין בנהג נוסף מלבדו ישלם תוספת של 20 ₪ ליום ועליו לדאוג (לוודא) שהמשכירה תציין את שמו ואת פרטיו של הנהג הנוסף בחוזה.
 <p>2. מורשה לנהוג ברכב נהג מגיל המחוייב בחוק.
 <p>3. השוכר מצהיר בזאת כי בדק את הרכב על כך צדדיו לרבות מרכב תחתון, טרם נסיעתו ומצא אותו מתאים לצרכיו בזאת, והשוכר מוותר על כל טענה של אי התאמה ו/או פגם.
@@ -146,85 +224,148 @@
 <p>30. חל איסור לצאת עם הרכב את גבולות המדינה או להיכנס לשטחי הרשות הפלסטינית.
 <p>31. בחלק מרכבי החברה מותקנות מערכות איתוראן לאיתור כלי הרכב (GPS). אני מצהיר כי הבנתי את כל סעיפי החוזה והוראותיהם.
 <p>32. על השוכר האחריות המלאה ויישא בתשלום מלא הנזקים שיגרמו בנהיגה בדרך לא סלולה ו/או נהיגה רשלנית ו/או פראית ו/או בניגוד לחוקי התעבורה, לרבות נזקים תוצאתיים כגון ימי השבתה כתוצאה מהחרמת הרכב על ידי המשטרה ו/או העמדתו במוסך. דמי טיפול בנזקים על סך 500 ₪. השוכר מצהיר כי נמסר לו שאין לנזקים אלו שום כיסוי ביטוחי, וכן נמסר לו כי במקרה של פגיעה בשני מוקדים לרבות נזקי צד ג' תחול עליו השתתפות עצמית על כל מוקד בנפרד. השוכר מתחייב לשלם דמי השתתפות עצמית בכל מקרה שייגרם נזק, בין שבאחריותו ובין שאינו באחריותו, לרבות נזקי אסון טבע, שריפה, גניבה טוטאלוס עד לסך גובה ההשתתפות העצמית. אני מצהיר כי הבנתי את כל סעיפי החוזה והוראותיהם. בחתימתי זו אני מתחייב לקיימם במלואם ולשאת בכל תשלום הנובע מהם, ככל שיידרש ממני על ידי המשכירה בהתאם לחוזה זה.
-            </div>
+        </div>
 
-            <div class="insurance-options">
-                <h3>מסלולי ביטוח:</h3>
-                <!-- כאן יבואו אפשרויות הביטוח -->
-            </div>
+        <div class="insurance-options">
+    <h3>מסלולי ביטוח:</h3>
+    <p>במידה והשוכר הינו נהג חדש ו/או מתחת לגיל 21 קיימים בפניו מספר מסלולי ביטוח. היה ובחר השוכר במסלול ביטוח חלקי, הרי שהוא מצהיר בזאת כי הוא נוטל על עצמו את האחריות.</p>
+    <div>
+        <input type="radio" id="insurance1" name="insurance" value="0">
+        <label for="insurance1">0 ₪ מסלול ביטוח חלקי א' - במקרה נזק ישא השוכר בתשלום גובה הנזק עד לסך מרבי של 15,000 ש"ח לפני מע"מ.</label>
+    </div>
+    <div>
+        <input type="radio" id="insurance2" name="insurance" value="89">
+        <label for="insurance2">89 ₪ מסלול ביטוח חלקי ב' - במקרה נזק ישא השוכר בתשלום גובה הנזק עד לסך מרבי של 4000 ש"ח לפני מע"מ.</label>
+    </div>
+    <div>
+        <input type="radio" id="insurance3" name="insurance" value="189">
+        <label for="insurance3">189 ₪ מסלול ביטוח מלא עם השתתפות עצמית - במקרה נזק ישא השוכר בהשתתפות עצמית כפי דרישת החוק עד 2000 ש"ח.</label>
+    </div>
+</div>
 
-            <div class="form-group">
-                <h3>חתימת לקוח:</h3>
-                <canvas id="signatureCanvas" width="300" height="200"></canvas>
-            </div>
-
-            <div class="button-container">
-                <button type="button" id="clearSignature">נקה חתימה</button>
-                <button type="button" id="createPDF">צור PDF</button>
-                <button type="button" onclick="window.print()">הדפס</button>
-            </div>
-        </form>
+    <div class="button-container">
+        <button id="clear-signature">נקה חתימה</button>
+        <button id="generatePDF">צור PDF</button>
+        <button onclick="window.print()">הדפס (Ctrl+P)</button>
     </div>
 
     <script>
-        // כאן יבוא קוד JavaScript לטיפול בפונקציונליות
-        document.addEventListener('DOMContentLoaded', function() {
-            const uploadLicense = document.getElementById('uploadLicense');
-            const uploadCarPhotos = document.getElementById('uploadCarPhotos');
-            const clearSignature = document.getElementById('clearSignature');
-            const createPDF = document.getElementById('createPDF');
-            const signatureCanvas = document.getElementById('signatureCanvas');
-            const ctx = signatureCanvas.getContext('2d');
+        const { jsPDF } = window.jspdf;
 
-            uploadLicense.addEventListener('click', function() {
-                // פונקציונליות להעלאת תמונת רישיון
+        function generatePDF() {
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const content = document.getElementById('content');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const margins = { top: 10, bottom: 10, left: 10, right: 10 };
+
+            html2canvas(content, { scale: 2, useCORS: true, allowTaint: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 0.7);
+                const imgWidth = pdfWidth - (margins.left + margins.right);
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                let position = margins.top;
+
+                pdf.addImage(imgData, 'JPEG', margins.left, position, imgWidth, imgHeight);
+                heightLeft -= (pdfHeight - margins.top - margins.bottom);
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', margins.left, position, imgWidth, imgHeight);
+                    heightLeft -= (pdfHeight - margins.top - margins.bottom);
+                }
+
+                pdf.save('car_rental_agreement.pdf');
             });
+        }
 
-            uploadCarPhotos.addEventListener('click', function() {
-                // פונקציונליות להעלאת תמונות רכב
+        const canvas = document.getElementById('signature-pad');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        canvas.addEventListener('touchstart', handleTouch);
+        canvas.addEventListener('touchmove', handleTouch);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touches = e.changedTouches;
+            const touch = touches[0];
+            const mouseEvent = new MouseEvent("mousemove", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
             });
+            canvas.dispatchEvent(mouseEvent);
+        }
 
-            clearSignature.addEventListener('click', function() {
-                ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
-            });
-
-            createPDF.addEventListener('click', function() {
-                // פונקציונליות ליצירת PDF
-            });
-
-            // פונקציונליות חתימה
-            let isDrawing = false;
-            signatureCanvas.addEventListener('mousedown', startDrawing);
-            signatureCanvas.addEventListener('mousemove', draw);
-            signatureCanvas.addEventListener('mouseup', stopDrawing);
-            signatureCanvas.addEventListener('touchstart', startDrawing);
-            signatureCanvas.addEventListener('touchmove', draw);
-            signatureCanvas.addEventListener('touchend', stopDrawing);
-
-            function startDrawing(e) {
-                isDrawing = true;
-                draw(e);
-            }
-
-            function draw(e) {
-                if (!isDrawing) return;
-                e.preventDefault();
-                const rect = signatureCanvas.getBoundingClientRect();
-                const x = e.clientX - rect.left || e.touches[0].clientX - rect.left;
-                const y = e.clientY - rect.top || e.touches[0].clientY - rect.top;
-                ctx.lineWidth = 2;
-                ctx.lineCap = 'round';
-                ctx.lineTo(x, y);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-            }
-
-            function stopDrawing() {
-                isDrawing = false;
-                ctx.beginPath();
-            }
+        document.getElementById('clear-signature').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         });
+
+        function previewImage(event, previewId) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById(previewId);
+                output.src = reader.result;
+                output.style.display = 'block';
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function previewMultipleImages(event) {
+            const output = document.getElementById('carImagesPreview');
+            output.innerHTML = '';
+            for (let i = 0; i < event.target.files.length; i++) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('image-preview', 'car-image');
+                    output.appendChild(img);
+                }
+                reader.readAsDataURL(event.target.files[i]);
+            }
+        }
+
+        function openCamera(inputId) {
+            document.getElementById(inputId).click();
+        }
+
+        document.getElementById('generatePDF').addEventListener('click', generatePDF);
+        document.getElementById('endMileage').disabled = true;
     </script>
 </body>
 </html>
