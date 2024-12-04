@@ -12,7 +12,7 @@
             background: #f8fafc;
         }
         .sidebar {
-            background: linear-gradient(180deg, #5dade2 0%, #5dade2 100%);
+            background: linear-gradient(180deg, #0f4c81 0%, #006d99 100%);
         }
         .nav-item {
             transition: all 0.3s ease;
@@ -222,67 +222,86 @@
                     הפתרון
                 </h1>
 <div class="card p-6 mb-6">
-    <div class="grid md:grid-cols-2 gap-6 items-center">
-        <div class="image-container">
-            <img src="https://i.ibb.co/kH4W576/Copy-of-GPS3-2.jpg" 
-                 alt="מכשיר המעקב ואפליקציה" 
-                 class="w-full rounded-lg shadow-lg">
-        </div>
+    <div class="grid md:grid-cols-2 gap-8 items-start">
+        <!-- Technical Specs -->
         <div class="space-y-6">
-            <div>
+            <div class="mb-8">
                 <div class="flex items-center mb-4">
-                    <i class="fas fa-microchip text-2xl text-green-500 ml-3"></i>
-                    <h2 class="text-xl font-bold text-gray-700">מפרט טכני</h2>
+                    <i class="fas fa-cog text-2xl text-green-500 ml-3"></i>
+                    <h2 class="text-xl font-bold">מפרט טכני</h2>
                 </div>
-                <ul class="space-y-3">
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 ml-2"></i>
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 ml-2"></i>
                         <span>תמיכה במתח: 7-60 VOLT</span>
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 ml-2"></i>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 ml-2"></i>
                         <span>אופציה למכשיר עם תמיכה עד 90 VOLT</span>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-                <!-- תקשורת -->
-                <div class="bg-blue-50 p-4 rounded-lg">
-                    <div class="flex items-center mb-2">
-                        <i class="fas fa-signal text-blue-500 ml-2"></i>
-                        <h3 class="font-bold">קוו 4</h3>
+                <!-- קו 4 -->
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 hover:shadow-lg transition-all duration-300">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold mb-2">קו 4</h3>
+                            <p class="text-sm text-gray-600">המכשיר פועל באמצעות טכנולוגיית GPS/LBS ובאמצעות דור 4, רשת חזקה במיוחד</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-full p-2.5 shadow-lg">
+                            <i class="fas fa-signal text-white text-lg"></i>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-600">המכשיר פועל באמצעות טכנולוגיית GPS/LBS ובאמצעות דור 4, רשת חזקה במיוחד</p>
                 </div>
 
-                <!-- זמינות -->
-                <div class="bg-blue-50 p-4 rounded-lg">
-                    <div class="flex items-center mb-2">
-                        <i class="fas fa-clock text-blue-500 ml-2"></i>
-                        <h3 class="font-bold">דגימה מהירה</h3>
+                <!-- דגימה מהירה -->
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 hover:shadow-lg transition-all duration-300">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold mb-2">דגימה מהירה</h3>
+                            <p class="text-sm text-gray-600">המכשיר יכול לשלוח נתונים מדי 2-8 שניות</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-full p-2.5 shadow-lg">
+                            <i class="fas fa-clock text-white text-lg"></i>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-600">המכשיר יכול לשלוח נתונים מדי 2-8 שניות</p>
                 </div>
 
-                <!-- התקנה -->
-                <div class="bg-blue-50 p-4 rounded-lg">
-                    <div class="flex items-center mb-2">
-                        <i class="fas fa-plug text-blue-500 ml-2"></i>
-                        <h3 class="font-bold">התקנה ברגע</h3>
+                <!-- התקנה ברגע -->
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 hover:shadow-lg transition-all duration-300">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold mb-2">התקנה ברגע</h3>
+                            <p class="text-sm text-gray-600">התקנה מהירה וקלה - חיבור פשוט לחשמל המלגזה</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-full p-2.5 shadow-lg">
+                            <i class="fas fa-plug text-white text-lg"></i>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-600">התקנה מהירה וקלה - חיבור פשוט לחשמל המלגזה</p>
                 </div>
 
-                <!-- התראות -->
-                <div class="bg-blue-50 p-4 rounded-lg">
-                    <div class="flex items-center mb-2">
-                        <i class="fas fa-bell text-blue-500 ml-2"></i>
-                        <h3 class="font-bold">התראות בזמן אמת</h3>
+                <!-- התראות בזמן אמת -->
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 hover:shadow-lg transition-all duration-300">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold mb-2">התראות בזמן אמת</h3>
+                            <p class="text-sm text-gray-600">התראות מיידיות על מצב המנוע, תנועה ועוד</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-full p-2.5 shadow-lg">
+                            <i class="fas fa-bell text-white text-lg"></i>
+                        </div>
                     </div>
-                    <p class="text-sm text-gray-600">התראות מיידיות על מצב המנוע, תנועה ועוד</p>
                 </div>
             </div>
+        </div>
+
+        <!-- Device Image -->
+        <div>
+            <img src="https://i.ibb.co/kH4W576/Copy-of-GPS3-2.jpg" 
+                 alt="מכשיר המעקב ואפליקציה" 
+                 class="w-full max-w-sm mx-auto rounded-lg shadow-lg">
         </div>
     </div>
 </div>
